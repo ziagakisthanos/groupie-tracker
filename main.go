@@ -13,6 +13,7 @@ func main() {
 
 	// server setup
 	mux := http.NewServeMux()
+	// register homePage root path
 	mux.HandleFunc("/", myapp.HomePageHandler)
 
 	// defining server port
@@ -31,7 +32,7 @@ func main() {
 	signal.Notify(stop, os.Interrupt)
 
 	// log the server startup
-	log.Printf("\nStarting server at http://localhost%v\n", addr)
+	log.Printf("\n🚀 Starting server at http://localhost%v\n", addr)
 
 	// starting server on separate goroutine
 	go func() {
@@ -50,6 +51,6 @@ func main() {
 		fmt.Printf("❌ Error during server shutdown: %v\n", err)
 	}
 
-	fmt.Println("✅ Server gracefully stopped.")
+	log.Println("\n✅ Server gracefully stopped.")
 
 }
