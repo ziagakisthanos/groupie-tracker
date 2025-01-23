@@ -1,6 +1,6 @@
 package myapp
 
-// artsist's data struct returned by the API
+// artist's data struct returned by the API
 type Artist struct {
 	ID           int      `json:"id"`
 	Image        string   `json:"image"`
