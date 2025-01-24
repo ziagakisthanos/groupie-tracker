@@ -26,15 +26,6 @@ func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// combine the fetched data
-	pageData := struct {
-		Artists   []myapp.Artist
-		Locations []myapp.Location
-	}{
-		Artists:   artists,
-		Locations: locations,
-	}
-
 	// template file path
 	templatePath := filepath.Join("assets", "index.html")
 
@@ -46,9 +37,15 @@ func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// combine the fetched data
+	data := myapp.PageData{
+		Artists:   artists,
+		Locations: locations,
+	}
+
 	// execute the template
 	// using the combined data (use `nil` if no data)
-	if err := tmpl.Execute(w, pageData); err != nil {
+	if err := tmpl.Execute(w, data); err != nil {
 		http.Error(w, "Failed to render template", http.StatusInternalServerError)
 		log.Fatal("Failed to load template:", err)
 	}
