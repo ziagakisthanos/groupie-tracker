@@ -8,7 +8,7 @@
     <!-- Link to the external JavaScript file -->
     <script src="newpage.js" defer></script>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-200">
 <!-- Header Section -->
 <div class="relative z-10 flex flex-col justify-center items-center text-center pt-12">
     <h1 class="text-6xl font-bold leading-tight mb-4 text-gray-800">Artists</h1>
@@ -16,7 +16,12 @@
 </div>
 
 <!-- Dynamic Artist Cards Container -->
-<div id="artists-container" class="grid grid-cols-4 gap-6 p-6"></div>
-<div id="pagination-controls" class="flex justify-center mt-6 space-x-4"></div>
+<div id="artists-container" class="grid grid-cols-4 gap-6 p-6">
+</div>
+
+<div id="pagination-container">
+    <div id="pagination-controls" class="flex justify-center mt-6 space-x-4">
+    </div>
+</div>
 </body>
 </html>

@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const paginationContainer = document.getElementById("pagination-container");
     const artistsContainer = document.getElementById("artists-container");
     const paginationControls = document.getElementById("pagination-controls");
 
@@ -7,6 +8,27 @@ document.addEventListener("DOMContentLoaded", () => {
         let currentPage = 1; // Track the current page
         const itemsPerPage = 8; // Number of cards per page
         let artistsData = []; // This will hold the fetched artist data
+
+        // Adjust the pagination container to act as a footer
+        const adjustPaginationPosition = () => {
+            const viewportHeight = window.innerHeight;
+            const contentHeight = artistsContainer.scrollHeight + paginationContainer.scrollHeight;
+
+            // if content isn't tall enough to fill the viewport, fix pagination to the bottom
+            if (contentHeight < viewportHeight) {
+                paginationContainer.style.position = "absolute";
+                paginationContainer.style.bottom = "10px";
+                paginationContainer.style.left = "0";
+                paginationContainer.style.width = "100%";
+                paginationContainer.style.textAlign = "center";
+            } else {
+                paginationContainer.style.position = "relative";
+                paginationContainer.style.bottom = "";
+                paginationContainer.style.left = "";
+                paginationContainer.style.width = "";
+                paginationContainer.style.textAlign = "";
+            }
+        };
 
         // Fetch artist data from the JSON file
         const fetchArtists = async () => {
@@ -48,46 +70,53 @@ document.addEventListener("DOMContentLoaded", () => {
             // Generate and append cards
             artistsToShow.forEach((artist) => {
                 const card = document.createElement("div");
-                card.className = "bg-white rounded-lg shadow-lg overflow-hidden group";
+                card.className = "bg-grey-100 rounded-lg shadow-2xl overflow-hidden group";
 
                 card.innerHTML = `
-                    <div class="relative pt-4 px-4 flex items-center justify-center">
-                        <img class="w-32 h-32 rounded-full object-cover border-4 border-gray-200"
-                             src="${artist.image}" alt="${artist.name}">
-                    </div>
-                    <div class="p-4">
-                        <h2 class="text-xl font-bold text-gray-800">${artist.name}</h2>
-                        <p class="text-sm text-gray-600"><strong>First Album:</strong> ${artist.firstAlbum}</p>
-                        <p class="text-sm text-gray-600"><strong>Members:</strong> ${artist.members.join(", ")}</p>
-                        <div class="mt-2">
-                            <a href="${artist.locations}" target="_blank" class="text-blue-500 hover:underline text-sm">View Locations</a>
-                            <a href="${artist.concertDates}" target="_blank" class="text-blue-500 hover:underline text-sm ml-2">View Concert Dates</a>
-                        </div>
-                    </div>
-                `;
+            <div class="relative pt-4 px-4 flex items-center justify-center">
+                <img class="w-32 h-32 rounded-full object-cover border-4 border-gray-200"
+                     src="${artist.image}" alt="${artist.name}">
+            </div>
+            <div class="p-4">
+                <h2 class="text-xl font-bold text-gray-800">${artist.name}</h2>
+                <p class="text-sm text-gray-600"><strong>First Album:</strong> ${artist.firstAlbum}</p>
+                <p class="text-sm text-gray-600"><strong>Members:</strong> ${artist.members.join(", ")}</p>
+                <div class="mt-2">
+                    <a href="${artist.locations}" target="_blank" class="text-blue-500 hover:underline text-sm">View Locations</a>
+                    <a href="${artist.concertDates}" target="_blank" class="text-blue-500 hover:underline text-sm ml-2">View Concert Dates</a>
+                </div>
+            </div>
+        `;
                 artistsContainer.appendChild(card);
             });
+
+            // Adjust the pagination position after rendering the content
+            adjustPaginationPosition();
         };
 
         // Create pagination controls dynamically
         const renderPagination = (totalItems) => {
             const totalPages = Math.ceil(totalItems / itemsPerPage);
+            console.log("Total Pages:", totalPages); // Check total pages calculation
             paginationControls.innerHTML = ""; // Clear existing buttons
 
             for (let i = 1; i <= totalPages; i++) {
                 const button = document.createElement("button");
                 button.className =
-                    "px-4 py-2 mx-1 bg-blue-500 text-white rounded hover:bg-blue-600";
+                    "px-4 py-2 mx-1 bg-gray-500 text-white rounded hover:bg-yellow-300";
                 button.textContent = i;
                 button.setAttribute("data-page", i);
 
                 if (i === currentPage) {
-                    button.classList.add("bg-blue-700");
+                    button.classList.add("text-black", "bg-yellow-400");
                 }
 
                 paginationControls.appendChild(button);
             }
+
+            console.log("Pagination Controls:", paginationControls.innerHTML); // Log to verify buttons
         };
+
 
         // Handle pagination button clicks
         paginationControls.addEventListener("click", (event) => {
@@ -112,6 +141,9 @@ document.addEventListener("DOMContentLoaded", () => {
             .catch((error) => {
                 console.error("Error initializing artists:", error);
             });
+
+        //Adjust pagination position on window resize
+        window.addEventListener("resize", adjustPaginationPosition);
 
     }
 });
