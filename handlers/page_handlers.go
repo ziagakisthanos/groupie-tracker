@@ -1,9 +1,9 @@
-package myapp
+package handlers
 
 import (
 	"html/template"
 	"log"
-	myapp "myapp/api"
+	"myapp/api"
 	"net/http"
 	"path/filepath"
 )
@@ -11,7 +11,7 @@ import (
 func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 
 	// fetch artist data
-	artists, err := myapp.FetchArtists()
+	artists, err := api.FetchArtists()
 	if err != nil {
 		http.Error(w, "Error fetching artist data", http.StatusInternalServerError)
 		log.Printf("Error fetching artist data: %v\n", err)
@@ -19,7 +19,7 @@ func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// fetch location data
-	locations, err := myapp.FetchLocations()
+	locations, err := api.FetchLocations()
 	if err != nil {
 		http.Error(w, "Error fetching location data", http.StatusInternalServerError)
 		log.Printf("Error fetching location data: %v\n", err) // Log the error
@@ -38,7 +38,7 @@ func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// combine the fetched data
-	data := myapp.PageData{
+	data := api.PageData{
 		Artists:   artists,
 		Locations: locations,
 	}

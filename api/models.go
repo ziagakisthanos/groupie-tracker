@@ -1,4 +1,4 @@
-package myapp
+package api
 
 // artist's data struct returned by the API
 type Artist struct {

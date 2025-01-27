@@ -1,15 +1,15 @@
-package myapp
+package handlers
 
 import (
 	"encoding/json"
 	"log"
-	myapp "myapp/api"
+	"myapp/api"
 	"net/http"
 )
 
 func APIHandler(w http.ResponseWriter, r *http.Request) {
 	// fetch artist data
-	artists, err := myapp.FetchArtists()
+	artists, err := api.FetchArtists()
 	if err != nil {
 		log.Printf("Error fetching artist data %v\n", err)
 
@@ -18,7 +18,7 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// fetch location data
-	locations, err := myapp.FetchLocations()
+	locations, err := api.FetchLocations()
 	if err != nil {
 		// log the error
 		log.Printf("Error fetching location data: %v\n", err)

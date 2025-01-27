@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
-	myapp "myapp/handlers"
+	"myapp/handlers"
 	"net/http"
 	"os"
 	"os/signal"
@@ -15,10 +15,11 @@ func main() {
 	// server setup
 	mux := http.NewServeMux()
 	// register homePage root path
-	mux.HandleFunc("/", myapp.HomePageHandler)
-  mux.HandleFunc("/api/data", myapp.APIHandler)
+	mux.HandleFunc("/", handlers.HomePageHandler)
+	// JSON data path
+	mux.HandleFunc("/api/data", handlers.APIHandler)
 
-    // Serve static files from the "assets" folder
+	// Serve static files from the "assets" folder
 	staticDir := filepath.Join("assets")
 	fs := http.FileServer(http.Dir(staticDir))
 	mux.Handle("/assets/", http.StripPrefix("/assets/", fs))
