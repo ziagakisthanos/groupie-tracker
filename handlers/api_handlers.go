@@ -36,7 +36,7 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 	// w.Header() is a method to access the HTTP response header objects
 	// Headers are metadata
 	// key-value headers (ex. content-type)
-	// bscly define the respone format as JSON to be parsed correctly
+	// bscly define the response format as JSON to be parsed correctly
 	// Set(key, value)
 	// not tied to a specific object
 	// manipulate key-value pairs in an HTTP header object

@@ -15,7 +15,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!response.ok) {
                     throw new Error(`Failed to fetch: ${response.status}`);
                 }
-                return await response.json();
+                const data = await response.json(); //fetch the json data
+                // Extract the array (adjust this to match the json structure
+                return data.artists || []; // replace the data ensuring it's always an array
             } catch (error) {
                 console.error("Error fetching artist data:", error);
                 artistsContainer.innerHTML = "<p class='text-red-500'>Failed to load artist data.</p>";
@@ -25,12 +27,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Render the artists for the current page
         const renderPage = (page) => {
+            if (!Array.isArray(artistsData)) {
+                console.error("artistsData is not an array:", artistsData);
+                artistsContainer.innerHTML = "<p class='text-red-500'>Invalid artist data format.</p>";
+                return;
+            }
+
             const startIndex = (page - 1) * itemsPerPage;
             const endIndex = page * itemsPerPage;
             const artistsToShow = artistsData.slice(startIndex, endIndex);
 
             // Clear the container
             artistsContainer.innerHTML = "";
+
+            if (artistsToShow.length === 0) {
+                artistsContainer.innerHTML = "<p>No artists to display.</p>";
+                return;
+            }
 
             // Generate and append cards
             artistsToShow.forEach((artist) => {
@@ -91,12 +104,14 @@ document.addEventListener("DOMContentLoaded", () => {
         // Fetch data and initialize the UI
         fetchArtists()
             .then((data) => {
-                artistsData = data; // Store the fetched data
-                renderPage(currentPage); // Render the first page
-                renderPagination(artistsData.length); // Create pagination controls
+                artistsData = data; //extract the array from the json object
+                // Ensure it's an array
+                renderPage(currentPage);
+                renderPagination(artistsData.length);
             })
             .catch((error) => {
                 console.error("Error initializing artists:", error);
             });
+
     }
 });
