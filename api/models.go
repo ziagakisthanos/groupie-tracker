@@ -25,3 +25,8 @@ type Location struct {
 type LocationAPIResponse struct {
 	Index []Location `json:"index"` // the key containing the array
 }
+
+type PageData struct {
+	Artists   []Artist
+	Locations []Location
+}

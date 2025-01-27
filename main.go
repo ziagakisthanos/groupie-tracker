@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
-	myapp "myapp/web"
+	myapp "myapp/handlers"
 	"net/http"
 	"os"
 	"os/signal"
@@ -15,6 +15,9 @@ func main() {
 	mux := http.NewServeMux()
 	// register homePage root path
 	mux.HandleFunc("/", myapp.HomePageHandler)
+
+	// api data path
+	mux.HandleFunc("/api/data", myapp.APIHandler)
 
 	// defining server port
 	addr := ":8080"

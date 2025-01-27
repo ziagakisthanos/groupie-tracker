@@ -14,15 +14,15 @@ func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 	artists, err := myapp.FetchArtists()
 	if err != nil {
 		http.Error(w, "Error fetching artist data", http.StatusInternalServerError)
+		log.Printf("Error fetching artist data: %v\n", err)
 		return
 	}
 
 	// fetch location data
 	locations, err := myapp.FetchLocations()
 	if err != nil {
-		log.Printf("Error fetching location data: %v\n", err) // Log the error
-
 		http.Error(w, "Error fetching location data", http.StatusInternalServerError)
+		log.Printf("Error fetching location data: %v\n", err) // Log the error
 		return
 	}
 
