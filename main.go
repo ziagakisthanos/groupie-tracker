@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 )
 
+//TODO: live url endpoints fix
+
 func main() {
 
 	// server setup

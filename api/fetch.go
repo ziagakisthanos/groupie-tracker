@@ -56,10 +56,33 @@ func FetchLocations() ([]Location, error) {
 	// parse the JSON data from the response in our Location struct
 	var locations LocationAPIResponse
 	if err := json.Unmarshal(body, &locations); err != nil {
-		log.Printf("Error unmarshaling JSON: %v\n", err)
+		log.Printf("Error unmarshaling locations JSON: %v\n", err)
 
 		return nil, err
 	}
 	// return the array containing the data
 	return locations.Index, nil
+}
+
+func FetchDates() ([]ConcertDate, error) {
+	url := "https://groupietrackers.herokuapp.com/api/dates"
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var dates DatesAPIResponse
+	if err := json.Unmarshal(body, &dates); err != nil {
+		log.Printf("Error unmarshaling dates JSON %v\n", err)
+		return nil, err
+	}
+
+	return dates.Index, nil
 }
