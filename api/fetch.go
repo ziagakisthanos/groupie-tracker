@@ -7,9 +7,6 @@ import (
 	"net/http"
 )
 
-//TODO: endpointAPI.go
-//expose API data for frontend use
-
 func FetchArtists() ([]Artist, error) {
 	// API endpoint
 	url := "https://groupietrackers.herokuapp.com/api/artists"
