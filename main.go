@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 )
 
 func main() {
@@ -15,9 +16,12 @@ func main() {
 	mux := http.NewServeMux()
 	// register homePage root path
 	mux.HandleFunc("/", myapp.HomePageHandler)
+  mux.HandleFunc("/api/data", myapp.APIHandler)
 
-	// api data path
-	mux.HandleFunc("/api/data", myapp.APIHandler)
+    // Serve static files from the "assets" folder
+	staticDir := filepath.Join("assets")
+	fs := http.FileServer(http.Dir(staticDir))
+	mux.Handle("/assets/", http.StripPrefix("/assets/", fs))
 
 	// defining server port
 	addr := ":8080"
