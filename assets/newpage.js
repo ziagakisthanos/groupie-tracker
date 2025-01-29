@@ -13,21 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const adjustPaginationPosition = () => {
             const viewportHeight = window.innerHeight;
             const contentHeight = artistsContainer.scrollHeight + paginationContainer.scrollHeight;
-
-            // if content isn't tall enough to fill the viewport, fix pagination to the bottom
-            if (contentHeight < viewportHeight) {
-                paginationContainer.style.position = "absolute";
-                paginationContainer.style.bottom = "10px";
-                paginationContainer.style.left = "0";
-                paginationContainer.style.width = "100%";
-                paginationContainer.style.textAlign = "center";
-            } else {
-                paginationContainer.style.position = "relative";
-                paginationContainer.style.bottom = "";
-                paginationContainer.style.left = "";
-                paginationContainer.style.width = "";
-                paginationContainer.style.textAlign = "";
-            }
         };
 
         // Fetch artist data from the JSON file
@@ -38,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     throw new Error(`Failed to fetch: ${response.status}`);
                 }
                 const data = await response.json(); //fetch the json data
-                // Extract the array (adjust this to match the json structure
+                // Extract the array (adjust this to match the json structure)
                 return data.artists || []; // replace the data ensuring it's always an array
             } catch (error) {
                 console.error("Error fetching artist data:", error);
@@ -70,11 +55,12 @@ document.addEventListener("DOMContentLoaded", () => {
             // Generate and append cards
             artistsToShow.forEach((artist) => {
                 const card = document.createElement("div");
-                card.className = "bg-grey-100 rounded-lg shadow-2xl overflow-hidden group";
+                card.className = "bg-gray-200 rounded-lg shadow-2xl overflow-hidden group w-full sm:w-70 md:w-90 h-auto min-h-[22rem] flex flex-col justify-start cursor-pointer transition-all duration-300";
 
+                // Card content
                 card.innerHTML = `
             <div class="relative pt-4 px-4 flex items-center justify-center">
-                <img class="w-32 h-32 rounded-full object-cover border-4 border-gray-200"
+                <img class="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-gray-200"
                      src="${artist.image}" alt="${artist.name}">
             </div>
             <div class="p-4">
@@ -87,6 +73,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             </div>
         `;
+                // Expand text on click
+                card.addEventListener("click", (event) => {
+                    const paragraph = card.querySelector("p");
+                    card.classList.toggle("h-auto");
+                    paragraph.classList.toggle("line-clamp-none");
+                });
                 artistsContainer.appendChild(card);
             });
 
@@ -113,10 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 paginationControls.appendChild(button);
             }
-
-            console.log("Pagination Controls:", paginationControls.innerHTML); // Log to verify buttons
         };
-
 
         // Handle pagination button clicks
         paginationControls.addEventListener("click", (event) => {
@@ -144,6 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         //Adjust pagination position on window resize
         window.addEventListener("resize", adjustPaginationPosition);
+        window.addEventListener("load", adjustPaginationPosition);
 
     }
 });
