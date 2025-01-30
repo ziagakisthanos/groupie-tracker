@@ -57,22 +57,37 @@ document.addEventListener("DOMContentLoaded", () => {
                 const card = document.createElement("div");
                 card.className = "bg-gray-200 rounded-lg shadow-2xl overflow-hidden group w-full sm:w-70 md:w-90 h-auto min-h-[22rem] flex flex-col justify-start cursor-pointer transition-all duration-300";
 
-                // Card content
-                card.innerHTML = `
-            <div class="relative pt-4 px-4 flex items-center justify-center">
-                <img class="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-gray-200"
-                     src="${artist.image}" alt="${artist.name}">
-            </div>
-            <div class="p-4">
-                <h2 class="text-xl font-bold text-gray-800">${artist.name}</h2>
-                <p class="text-sm text-gray-600"><strong>First Album:</strong> ${artist.firstAlbum}</p>
-                <p class="text-sm text-gray-600"><strong>Members:</strong> ${artist.members.join(", ")}</p>
-                <div class="mt-2">
-                    <a href="${artist.locations}" target="_blank" class="text-blue-500 hover:underline text-sm">View Locations</a>
-                    <a href="${artist.concertDates}" target="_blank" class="text-blue-500 hover:underline text-sm ml-2">View Concert Dates</a>
-                </div>
-            </div>
-        `;
+// Card content
+card.innerHTML = `
+    <div class="relative flex flex-col h-full gray-200 shadow-2xl rounded-lg p-4 min-h-[350px]">
+        <div class="flex justify-center items-center pb-4">
+            <img class="w-30 h-30 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-gray-200"
+                src="${artist.image}" alt="${artist.name}">
+        </div>
+        <div class="flex-grow">
+            <h2 class="text-xl font-bold text-gray-800">${artist.name}</h2>
+            <p class="text-sm text-gray-600"><strong>First Album:</strong> ${artist.firstAlbum}</p>
+            <p class="text-sm text-gray-600"><strong>Members:</strong> ${artist.members.join(", ")}</p>
+        </div>
+        <div class="mt-auto flex justify-center gap-7 pb-3">
+            <button type="button" onclick="window.open('${artist.locations}', '_blank')" 
+                class="text-white bg-gradient-to-r from-gray-600 via-gray-800 to-black hover:bg-gradient-to-br 
+                       focus:ring-4 focus:outline-none focus:ring-gray-500 dark:focus:ring-gray-900 shadow-lg 
+                       shadow-gray-600/50 dark:shadow-lg dark:shadow-gray-900/80 font-medium rounded-lg 
+                       text-sm px-5 py-2.5 text-center">
+                 View Locations
+            </button>
+            <button type="button" onclick="window.open('${artist.concertDates}', '_blank')" 
+                class="text-white bg-gradient-to-r from-gray-600 via-gray-800 to-black hover:bg-gradient-to-br 
+                       focus:ring-4 focus:outline-none focus:ring-gray-500 dark:focus:ring-gray-900 shadow-lg 
+                       shadow-gray-600/50 dark:shadow-lg dark:shadow-gray-900/80 font-medium rounded-lg 
+                       text-sm px-5 py-2.5 text-center">
+                 View Concert Dates
+            </button>
+        </div>
+    </div>
+`;
+
                 // Expand text on click
                 card.addEventListener("click", (event) => {
                     const paragraph = card.querySelector("p");
