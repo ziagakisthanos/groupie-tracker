@@ -8,19 +8,6 @@
     <!-- Link to the external JavaScript file -->
     <script src="newpage.js" defer></script>
 
-    <!-- CSS for correct card size and placement-->
-    <style>
-        .line-clamp-3 {
-            display: -webkit-box;
-            -webkit-line-clamp: 3; /* Limits text to 3 lines */
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .line-clamp-none {
-            -webkit-line-clamp: unset; /* Removes the limit when clicked */
-        }
-    </style>
 </head>
 <body class="bg-gray-200 min-h-screen flex flex-col">
 
@@ -34,11 +21,16 @@
 <div class="" style="min-height: 80vh !important;">
     <div id="artists-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6  items-start">
     </div>
-<!-- Pagination Container -->
+    <!-- Pagination Container -->
     <div id="pagination-container" class="w-full flex justify-center mb-6" style="bottom: 0 !important; position: fixed;">
         <div id="pagination-controls" class="flex flex-wrap justify-center gap-3 max-w-2xl mx-auto">
         </div>
     </div>
+</div>
+
+<!-- Modal -->
+<div id="locations-modal-${artist.id}" tabindex="-1"
+     class="relative w-full max-w-lg md:max-w-xl lg:max-w-3xl max-h-full">
 </div>
 
 
