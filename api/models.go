@@ -8,35 +8,46 @@ type Artist struct {
 	Members      []string `json:"members"`
 	CreationDate int      `json:"creationDate"`
 	FirstAlbum   string   `json:"firstAlbum"`
-	Locations    string   `json:"locations"`
-	ConcertDates string   `json:"concertDates"`
-	Relations    string   `json:"relations"`
+	Locations    `json:"-"`
+	Dates        `json:"-"`
+	Relation     `json:"-"`
 }
 
 // concert location's data struct returned by API
-type Location struct {
+type Locations struct {
 	ID        int      `json:"id"` // the array values
 	Locations []string `json:"locations"`
-	Dates     []string `json:"dates"`
-}
-
-// concert dates's data struct returned by API
-type ConcertDate struct {
-	ID    int      `json:"id"`
-	Dates []string `json:"dates"`
 }
 
 // the root object of the locations API response.
 type LocationAPIResponse struct {
-	Index []Location `json:"index"` // the key containing the array
+	Index []Locations `json:"index"` // the key containing the array
 }
 
-// object of dates's API response
+// concert dates API data struct, same approach as locations
+type Dates struct {
+	ID    int      `json:"id"`
+	Dates []string `json:"dates"`
+}
+
 type DatesAPIResponse struct {
-	Index []ConcertDate `json:"index"`
+	Index []Dates `json:"index"`
 }
 
-type PageData struct {
-	Artists   []Artist
-	Locations []Location
+// relations contains dynamic keys
+// we map the data using locations as key and dates as values
+type Relation struct {
+	ID             int                 `json:"id"`
+	DatesLocations map[string][]string `json:"datesLocations"`
+}
+
+type RelationAPIResponse struct {
+	Index []Relation `json:"index"`
+}
+
+type ArtistDetails struct {
+	Artist    Artist              `json:"artist"`
+	Locations []string            `json:"locations"`
+	Dates     []string            `json:"dates"`
+	Relations map[string][]string `json:"relations"`
 }
