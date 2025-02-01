@@ -2,6 +2,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const paginationContainer = document.getElementById("pagination-container");
     const artistsContainer = document.getElementById("artists-container");
     const paginationControls = document.getElementById("pagination-controls");
+    const loadingElement = document.createElement("div"); // Create a loading element
+    loadingElement.className = "text-center text-gray-600 py-4";
+    loadingElement.textContent = "Loading artist data...";
 
     if (artistsContainer && paginationControls) {
         const jsonURL = 'http://localhost:8080/api/data'; // Path to the JSON URL
@@ -9,26 +12,69 @@ document.addEventListener("DOMContentLoaded", () => {
         const itemsPerPage = 8; // Number of cards per page
         let artistsData = []; // This will hold the fetched artist data
 
-        // Adjust the pagination container to act as a footer
-        const adjustPaginationPosition = () => {
-            const viewportHeight = window.innerHeight;
-            const contentHeight = artistsContainer.scrollHeight + paginationContainer.scrollHeight;
-        };
+// Display loading state
+artistsContainer.appendChild(loadingElement);
 
-        // Fetch artist data from the JSON file
-        const fetchArtists = async () => {
-            try {
-                const response = await fetch(jsonURL);
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch: ${response.status}`);
-                }
-                const data = await response.json(); //fetch the json data
-                // Extract the array (adjust this to match the json structure)
-                return data.artists || []; // replace the data ensuring it's always an array
-            } catch (error) {
-                console.error("Error fetching artist data:", error);
-                artistsContainer.innerHTML = "<p class='text-red-500'>Failed to load artist data.</p>";
-                return [];
+// Fetch artist data with retry logic
+const fetchArtistsWithRetry = async (url, retries = 5, delay = 1000) => {
+    for (let i = 0; i < retries; i++) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch: ${response.status}`);
+            }
+            const data = await response.json();
+            console.log("Fetched data:", data); // Log the fetched data
+            return data; // Return the fetched JSON array
+        } catch (error) {
+            console.error(`Attempt ${i + 1} failed:`, error);
+            if (i === retries - 1) {
+                throw error; // Throw the error if all retries fail
+            }
+            await new Promise(resolve => setTimeout(resolve, delay)); // Wait before retrying
+        }
+    }
+};
+
+// Adjust the pagination container to act as a footer
+const adjustPaginationPosition = () => {
+    const viewportHeight = window.innerHeight;
+    const contentHeight = artistsContainer.scrollHeight + paginationControls.scrollHeight;
+
+    if (contentHeight < viewportHeight) {
+        paginationControls.style.position = "fixed";
+        paginationControls.style.bottom = "0";
+        paginationControls.style.left = "0";
+        paginationControls.style.right = "0";
+        paginationControls.style.backgroundColor = "white";
+        paginationControls.style.padding = "10px";
+        paginationControls.style.boxShadow = "0 -2px 5px rgba(0, 0, 0, 0.1)";
+    } else {
+        paginationControls.style.position = "static";
+    }
+};
+
+// Fetch data and initialize the UI
+fetchArtistsWithRetry(jsonURL)
+    .then((data) => {
+        console.log("Data fetched successfully:", data); // Log the fetched data
+
+        // Assign the fetched data to artistsData
+        artistsData = data;
+
+        if (!Array.isArray(artistsData)) {
+            throw new Error("Fetched data is not an array");
+        }
+
+        loadingElement.remove(); // Remove the loading spinner
+        renderPage(currentPage);
+        renderPagination(artistsData.length);
+        adjustPaginationPosition(); // Adjust pagination position
+    })
+    .catch((error) => {
+        console.error("Error initializing artists:", error);
+        loadingElement.textContent = "Failed to load artist data. Please try again later.";
+    });
             }
         };
 
@@ -55,6 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Generate and append cards
             artistsToShow.forEach((artist) => {
                 const card = document.createElement("div");
+              
                 card.className = "bg-gray-200 rounded-lg shadow-2xl overflow-hidden group w-full sm:w-70 md:w-90 h-auto min-h-[22rem] flex flex-col justify-start cursor-pointer transition-all duration-300";
 
 // Card content
@@ -94,6 +141,7 @@ card.innerHTML = `
                     card.classList.toggle("h-auto");
                     paragraph.classList.toggle("line-clamp-none");
                 });
+              
                 artistsContainer.appendChild(card);
             });
 
@@ -135,20 +183,24 @@ card.innerHTML = `
         });
 
         // Fetch data and initialize the UI
-        fetchArtists()
+        fetchArtistsWithRetry(jsonURL)
             .then((data) => {
-                artistsData = data; //extract the array from the json object
-                // Ensure it's an array
+                console.log("Data fetched successfully:", data); // Log the fetched data
+
+                // Assign the fetched data to artistsData
+                artistsData = data;
+
+                if (!Array.isArray(artistsData)) {
+                    throw new Error("Fetched data is not an array");
+                }
+
+                loadingElement.remove(); // Remove the loading spinner
                 renderPage(currentPage);
                 renderPagination(artistsData.length);
             })
             .catch((error) => {
                 console.error("Error initializing artists:", error);
+                loadingElement.textContent = "Failed to load artist data. Please try again later.";
             });
-
-        //Adjust pagination position on window resize
-        window.addEventListener("resize", adjustPaginationPosition);
-        window.addEventListener("load", adjustPaginationPosition);
-
     }
 });

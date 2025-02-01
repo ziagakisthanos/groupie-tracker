@@ -10,14 +10,17 @@ import (
 	"path/filepath"
 )
 
-func main() {
+//TODO: live url endpoints fix
 
+func main() {
 	// server setup
 	mux := http.NewServeMux()
 	// register homePage root path
 	mux.HandleFunc("/", handlers.HomePageHandler)
 	// JSON data path
 	mux.HandleFunc("/api/data", handlers.APIHandler)
+	// Serve the health check endpoint
+	http.HandleFunc("/health", handlers.HealthHandler)
 
 	// Serve static files from the "assets" folder
 	staticDir := filepath.Join("assets")
