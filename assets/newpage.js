@@ -75,8 +75,6 @@ fetchArtistsWithRetry(jsonURL)
         console.error("Error initializing artists:", error);
         loadingElement.textContent = "Failed to load artist data. Please try again later.";
     });
-            }
-        };
 
         // Render the artists for the current page
         const renderPage = (page) => {
@@ -109,11 +107,11 @@ card.innerHTML = `
     <div class="relative flex flex-col h-full gray-200 shadow-2xl rounded-lg p-4 min-h-[350px]">
         <div class="flex justify-center items-center pb-4">
             <img class="w-30 h-30 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-gray-200"
-                src="${artist.image}" alt="${artist.name}">
+                src="${artist.artist.image}" alt="${artist.artist.name}">
         </div>
         <div class="flex-grow">
             <h2 class="text-xl font-bold text-gray-800">${artist.name}</h2>
-            <p class="text-sm text-gray-600"><strong>First Album:</strong> ${artist.firstAlbum}</p>
+            <p class="text-sm text-gray-600"><strong>First Album:</strong> ${artist.artist.firstAlbum}</p>
             <p class="text-sm text-gray-600"><strong>Members:</strong> ${artist.members.join(", ")}</p>
         </div>
         <div class="mt-auto flex justify-center gap-7 pb-3">
