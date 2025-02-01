@@ -12,7 +12,7 @@ func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 	// fetch artist data
 	artists, err := api.FetchAllData()
 	if err != nil {
-		http.Error(w, "Error fetching artist dataAAAA", http.StatusInternalServerError)
+		http.Error(w, "Error fetching artist data", http.StatusInternalServerError)
 		log.Printf("Error fetching artists: %v\n", err)
 		return
 	}

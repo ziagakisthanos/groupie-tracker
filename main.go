@@ -13,7 +13,6 @@ import (
 //TODO: live url endpoints fix
 
 func main() {
-
 	// server setup
 	mux := http.NewServeMux()
 	// register homePage root path
