@@ -1,6 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
     const artistsContainer = document.getElementById("artists-container");
     const paginationControls = document.getElementById("pagination-controls");
+    const loadingElement = document.createElement("div"); // Create a loading element
+    loadingElement.className = "text-center text-gray-600 py-4";
+    loadingElement.textContent = "Loading artist data...";
 
     if (artistsContainer && paginationControls) {
         const jsonURL = 'http://localhost:8080/api/data'; // Path to the JSON URL
@@ -8,20 +11,27 @@ document.addEventListener("DOMContentLoaded", () => {
         const itemsPerPage = 8; // Number of cards per page
         let artistsData = []; // This will hold the fetched artist data
 
-        // Fetch artist data from the JSON file
-        const fetchArtists = async () => {
-            try {
-                const response = await fetch(jsonURL);
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch: ${response.status}`);
+        // Display loading state
+        artistsContainer.appendChild(loadingElement);
+
+        // Fetch artist data with retry logic
+        const fetchArtistsWithRetry = async (url, retries = 5, delay = 1000) => {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    console.log("Fetched data:", data); // Log the fetched data
+                    return data; // Return the fetched JSON array
+                } catch (error) {
+                    console.error(`Attempt ${i + 1} failed:`, error);
+                    if (i === retries - 1) {
+                        throw error; // Throw the error if all retries fail
+                    }
+                    await new Promise(resolve => setTimeout(resolve, delay)); // Wait before retrying
                 }
-                const data = await response.json(); //fetch the json data
-                // Extract the array (adjust this to match the json structure
-                return data.artists || []; // replace the data ensuring it's always an array
-            } catch (error) {
-                console.error("Error fetching artist data:", error);
-                artistsContainer.innerHTML = "<p class='text-red-500'>Failed to load artist data.</p>";
-                return [];
             }
         };
 
@@ -53,15 +63,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 card.innerHTML = `
                     <div class="relative pt-4 px-4 flex items-center justify-center">
                         <img class="w-32 h-32 rounded-full object-cover border-4 border-gray-200"
-                             src="${artist.image}" alt="${artist.name}">
+                             src="${artist.artist.image}" alt="${artist.artist.name}">
                     </div>
                     <div class="p-4">
-                        <h2 class="text-xl font-bold text-gray-800">${artist.name}</h2>
-                        <p class="text-sm text-gray-600"><strong>First Album:</strong> ${artist.firstAlbum}</p>
-                        <p class="text-sm text-gray-600"><strong>Members:</strong> ${artist.members.join(", ")}</p>
+                        <h2 class="text-xl font-bold text-gray-800">${artist.artist.name}</h2>
+                        <p class="text-sm text-gray-600"><strong>First Album:</strong> ${artist.artist.firstAlbum}</p>
+                        <p class="text-sm text-gray-600"><strong>Members:</strong> ${artist.artist.members.join(", ")}</p>
                         <div class="mt-2">
-                            <a href="${artist.locations}" target="_blank" class="text-blue-500 hover:underline text-sm">View Locations</a>
-                            <a href="${artist.concertDates}" target="_blank" class="text-blue-500 hover:underline text-sm ml-2">View Concert Dates</a>
+                            <p class="text-sm text-gray-600"><strong>Locations:</strong> ${artist.locations.join(", ")}</p>
+                            <p class="text-sm text-gray-600"><strong>Concert Dates:</strong> ${artist.dates.join(", ")}</p>
                         </div>
                     </div>
                 `;
@@ -102,16 +112,24 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // Fetch data and initialize the UI
-        fetchArtists()
+        fetchArtistsWithRetry(jsonURL)
             .then((data) => {
-                artistsData = data; //extract the array from the json object
-                // Ensure it's an array
+                console.log("Data fetched successfully:", data); // Log the fetched data
+
+                // Assign the fetched data to artistsData
+                artistsData = data;
+
+                if (!Array.isArray(artistsData)) {
+                    throw new Error("Fetched data is not an array");
+                }
+
+                loadingElement.remove(); // Remove the loading spinner
                 renderPage(currentPage);
                 renderPagination(artistsData.length);
             })
             .catch((error) => {
                 console.error("Error initializing artists:", error);
+                loadingElement.textContent = "Failed to load artist data. Please try again later.";
             });
-
     }
 });
