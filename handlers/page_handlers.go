@@ -34,7 +34,7 @@ func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func NewPageHandler(w http.ResponseWriter, r *http.Request) {
+func ArtistsPageHandler(w http.ResponseWriter, r *http.Request) {
 	// fetch artist data
 	artistDetails, err := api.FetchAllData()
 	if err != nil {
@@ -44,7 +44,7 @@ func NewPageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// template file path
-	templatePath := filepath.Join("assets", "newpage.html")
+	templatePath := filepath.Join("assets", "artists.html")
 
 	// parse the template
 	tmpl, err := template.ParseFiles(templatePath)
