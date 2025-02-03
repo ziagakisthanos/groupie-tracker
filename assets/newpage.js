@@ -19,10 +19,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const fetchArtistsWithRetry = async (url, retries = 5, delay = 1000) => {
             for (let i = 0; i < retries; i++) {
                 try {
+                    console.log("Fetching data from:", jsonURL);
                     const response = await fetch(url);
+
                     if (!response.ok) {
+                        console.error(`Error: ${response.status} - ${response.statusText}`);
                         throw new Error(`Failed to fetch: ${response.status}`);
                     }
+
                     const data = await response.json();
                     console.log("Fetched data:", data); // Log the fetched data
                     return data; // Return the fetched JSON array
@@ -113,14 +117,15 @@ document.addEventListener("DOMContentLoaded", () => {
             <p class="text-sm text-gray-600"><strong>Members:</strong> ${artist.artist.members.join(", ")}</p>
         </div>
         <div class="mt-auto flex justify-center gap-7 pb-3">
-            <button type="button" onclick="window.open('${artist.artist.locations}', '_blank')" 
+            <button type="button" onclick="alert('${artist.locations.join(", ")}')">
+    View Locations
                 class="text-white bg-gradient-to-r from-gray-600 via-gray-800 to-black hover:bg-gradient-to-br 
                        focus:ring-4 focus:outline-none focus:ring-gray-500 dark:focus:ring-gray-900 shadow-lg 
                        shadow-gray-600/50 dark:shadow-lg dark:shadow-gray-900/80 font-medium rounded-lg 
                        text-sm px-5 py-2.5 text-center">
                  View Locations
             </button>
-            <button type="button" onclick="window.open('${artist.artist.concertDates}', '_blank')" 
+            <button type="button" onclick="alert('${Object.values(artist.relations).flat().join(", ")}')">
                 class="text-white bg-gradient-to-r from-gray-600 via-gray-800 to-black hover:bg-gradient-to-br 
                        focus:ring-4 focus:outline-none focus:ring-gray-500 dark:focus:ring-gray-900 shadow-lg 
                        shadow-gray-600/50 dark:shadow-lg dark:shadow-gray-900/80 font-medium rounded-lg 
