@@ -34,33 +34,47 @@
 <!-- Large Modal -->
 <div id="large-modal" tabindex="-1"
      class="fixed inset-0 flex items-center justify-center z-50 hidden backdrop-blur-lg bg-gray-900 bg-opacity-50 transition-opacity">
-    <div class="relative w-full max-w-3xl max-h-full px-4">
-        <!-- Modal content -->
-        <div class="relative bg-white rounded-xl shadow-2xl transform scale-95 transition-transform">
-            <!-- Modal header -->
-            <div class="flex items-center justify-between p-6 border-b border-gray-300">
-                <h3 class="text-3xl font-bold text-gray-900">
-                    Concert Dates
-                </h3>
-                <button type="button"
-                        class="text-gray-500 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center transition"
-                        data-modal-hide="large-modal">
-                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                         viewBox="0 0 14 14">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                    </svg>
-                </button>
-            </div>
-            <!-- Modal body -->
-            <div id="modal-body-content" class="p-6 space-y-4 text-gray-700 text-lg leading-relaxed">
-                <p class="text-gray-600">
-                    Loading concert dates...
-                </p>
-            </div>
+    <div class="relative w-[50vw] max-w-[600px] h-[50vh] max-h-[600px] flex flex-col bg-white rounded-xl shadow-2xl transform scale-95 transition-transform">
+        <!-- Modal header -->
+        <div class="flex items-center justify-between p-6 border-b border-gray-300">
+            <h3 class="text-3xl font-bold text-gray-900">
+                Concert Dates
+            </h3>
+            <button type="button"
+                    class="text-gray-500 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center transition"
+                    data-modal-hide="large-modal">
+                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                </svg>
+            </button>
+        </div>
+        <!-- Modal body -->
+        <div id="modal-body-content" class="p-6 space-y-4 text-gray-700 text-lg leading-relaxed
+                    flex-grow overflow-y-scroll max-h-[500px] pr-4">
+            <p class="text-gray-600">
+                Loading concert dates...
+            </p>
         </div>
     </div>
 </div>
+
+<style>
+    #modal-body-content::-webkit-scrollbar {
+        width: 10px; /* Makes scrollbar more visible */
+    }
+
+    #modal-body-content::-webkit-scrollbar-thumb {
+        background: #616161; /* Scrollbar color */
+        border-radius: 5px; /* Rounded edges */
+    }
+
+    #modal-body-content::-webkit-scrollbar-thumb:hover {
+        background: #3e3e3e; /* Darker on hover */
+    }
+</style>
+
 
 </body>
 </html>
