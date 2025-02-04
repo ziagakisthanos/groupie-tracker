@@ -11,18 +11,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const itemsPerPage = 8;
     let artistsData = [];
 
-    // Display loading state
-    artistsContainer.appendChild(loadingElement);
-
     // Fetch artist data with retry logic
     const fetchArtistsWithRetry = async (url, retries = 5, delay = 1000) => {
         for (let i = 0; i < retries; i++) {
             try {
                 const response = await fetch(url);
-                if (!response.ok) throw new Error(`Failed to fetch: ${response.status}`);
-
-                const data = await response.json();
-                return data;
+                if (!response.ok) {
+                    if (response.status >= 400 && response.status < 500) {
+                        throw new Error(`Client Error ${response.status}: Won't retry.`);
+                    }
+                    throw new Error(`Server Error ${response.status}: Retrying...`);
+                }
+                return await response.json();
             } catch (error) {
                 console.error(`Attempt ${i + 1} failed:`, error);
                 if (i === retries - 1) throw error;
@@ -31,6 +31,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    // Toggle the modal display for concert dates
+    const toggleModal = (show, artistData = null) => {
+        if (show) {
+            modalHeader.textContent = `${artistData.artist.name} Concert Dates`;
+            modalBody.innerHTML = generateConcertList(artistData.relations);
+            modal.classList.remove("hidden");
+            setTimeout(() => modal.classList.add("opacity-100", "scale-100"), 50);
+        } else {
+            modal.classList.remove("opacity-100", "scale-100");
+            setTimeout(() => modal.classList.add("hidden"), 200);
+        }
+    };
+
+    // Generate a formatted list of concert dates
     const generateConcertList = (relations) => {
         if (!relations || Object.keys(relations).length === 0) {
             return "<p class='text-gray-600 text-lg'>No concert data available.</p>";
@@ -61,10 +75,9 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     };
 
-    // Handle click events on dynamically added elements
+    // Handle click events for opening the modal
     artistsContainer.addEventListener("click", (event) => {
         const target = event.target;
-
         if (target.classList.contains("concert-dates-btn") || target.closest(".concert-dates-btn")) {
             const card = target.closest(".artist-card");
             const startIndex = (currentPage - 1) * itemsPerPage;
@@ -72,29 +85,19 @@ document.addEventListener("DOMContentLoaded", () => {
             const artistData = artistsData[artistIndex];
 
             if (artistData) {
-                modalHeader.textContent = `${artistData.artist.name} Concert Dates`;
-                modalBody.innerHTML = generateConcertList(artistData.relations);
-
-                modal.classList.remove("hidden");
-                setTimeout(() => modal.classList.add("opacity-100", "scale-100"), 50);
+                toggleModal(true, artistData);
             }
         }
     });
 
-    // Event listener to close the modal when clicking any close button
+    // Close modal when clicking any close button
     document.querySelectorAll('[data-modal-hide]').forEach((closeBtn) => {
-        closeBtn.addEventListener("click", () => {
-            modal.classList.remove("opacity-100", "scale-100");
-            setTimeout(() => modal.classList.add("hidden"), 200);
-        });
+        closeBtn.addEventListener("click", () => toggleModal(false));
     });
 
-    // Close modal when clicking outside the modal content
+    // Close modal when clicking outside
     modal.addEventListener("click", (event) => {
-        if (event.target === modal) {
-            modal.classList.remove("opacity-100", "scale-100");
-            setTimeout(() => modal.classList.add("hidden"), 200);
-        }
+        if (event.target === modal) toggleModal(false);
     });
 
     // Render artists for the current page
@@ -109,49 +112,50 @@ document.addEventListener("DOMContentLoaded", () => {
         const endIndex = page * itemsPerPage;
         const artistsToShow = artistsData.slice(startIndex, endIndex);
 
-        artistsContainer.innerHTML = "";
-
         if (artistsToShow.length === 0) {
             artistsContainer.innerHTML = "<p>No artists to display.</p>";
             return;
         }
 
-        // Generate artist cards
+        const fragment = document.createDocumentFragment();
+        artistsContainer.innerHTML = ""; // Clear only once
+
         artistsToShow.forEach((artist, index) => {
             const card = document.createElement("div");
             card.className = `artist-card bg-gray-200 rounded-lg shadow-2xl overflow-hidden w-full sm:w-70 md:w-90 h-auto min-h-[22rem] 
-                              flex flex-col justify-start transition-all duration-300 opacity-0 fall-animation fall-delay-${(index % 8) + 1}`;
+                          flex flex-col justify-start transition-all duration-300 opacity-0 fall-animation fall-delay-${(index % 8) + 1}`;
 
             card.innerHTML = `
-                <div class="relative flex flex-col h-full bg-gray-200 shadow-2xl rounded-lg p-4 min-h-[350px]">
-                    <div class="flex justify-center items-center pb-4">
-                        <img class="w-30 h-30 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-gray-200 
-                                    transition-transform duration-300 ease-in-out transform hover:scale-110"
-                            src="${artist.artist.image}" alt="${artist.artist.name}">
-                    </div>
-                    <div class="flex-grow">
-                        <h2 class="text-xl font-bold text-gray-800">${artist.artist.name}</h2>
-                        <p class="text-sm text-gray-600"><strong>First Album:</strong> ${artist.artist.firstAlbum}</p>
-                        <p class="text-sm text-gray-600"><strong>Members:</strong> ${artist.artist.members.join(", ")}</p>
-                    </div>
-                    <div class="mt-auto flex flex-col justify-center pb-3">
-                        <button type="button" class="concert-dates-btn text-white bg-gradient-to-r from-gray-600 via-gray-800 to-black 
-                                hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-gray-500 dark:focus:ring-gray-900 
-                                shadow-lg shadow-gray-600/50 dark:shadow-lg dark:shadow-gray-900/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                            View Concert Dates
-                        </button>
-                        <div class="concert-details hidden text-sm text-gray-700 mt-2 p-2 bg-white rounded-lg shadow-md"></div>
-                    </div>
+            <div class="relative flex flex-col h-full bg-gray-200 shadow-2xl rounded-lg p-4 min-h-[350px]">
+                <div class="flex justify-center items-center pb-4">
+                    <img class="w-30 h-30 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-gray-200 
+                                transition-transform duration-300 ease-in-out transform hover:scale-110"
+                        src="${artist.artist.image}" alt="${artist.artist.name}">
                 </div>
-            `;
+                <div class="flex-grow">
+                    <h2 class="text-xl font-bold text-gray-800">${artist.artist.name}</h2>
+                    <p class="text-sm text-gray-600"><strong>First Album:</strong> ${artist.artist.firstAlbum}</p>
+                    <p class="text-sm text-gray-600"><strong>Members:</strong> ${artist.artist.members.join(", ")}</p>
+                </div>
+                <div class="mt-auto flex flex-col justify-center pb-3">
+                    <button type="button" class="concert-dates-btn text-white bg-gradient-to-r from-gray-600 via-gray-800 to-black 
+                            hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-gray-500 dark:focus:ring-gray-900 
+                            shadow-lg shadow-gray-600/50 dark:shadow-lg dark:shadow-gray-900/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                        View Concert Dates
+                    </button>
+                    <div class="concert-details hidden text-sm text-gray-700 mt-2 p-2 bg-white rounded-lg shadow-md"></div>
+                </div>
+            </div>
+        `;
 
-            artistsContainer.appendChild(card);
+            fragment.appendChild(card);
 
-            // Ensure opacity transition happens
             setTimeout(() => {
                 card.classList.remove("opacity-0");
             }, 50);
         });
+
+        artistsContainer.appendChild(fragment); // Append all at once
 
         adjustPaginationPosition();
     };
