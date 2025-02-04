@@ -124,7 +124,8 @@ document.addEventListener("DOMContentLoaded", () => {
             card.innerHTML = `
                 <div class="relative flex flex-col h-full bg-gray-200 shadow-2xl rounded-lg p-4 min-h-[350px]">
                     <div class="flex justify-center items-center pb-4">
-                        <img class="w-30 h-30 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-gray-200"
+                        <img class="w-30 h-30 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-gray-200 
+                                    transition-transform duration-300 ease-in-out transform hover:scale-110"
                             src="${artist.artist.image}" alt="${artist.artist.name}">
                     </div>
                     <div class="flex-grow">
