@@ -117,9 +117,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // Generate artist cards
-        artistsToShow.forEach((artist) => {
+        artistsToShow.forEach((artist, index) => {
             const card = document.createElement("div");
-            card.className = "artist-card bg-gray-200 rounded-lg shadow-2xl overflow-hidden w-full sm:w-70 md:w-90 h-auto min-h-[22rem] flex flex-col justify-start transition-all duration-300";
+            card.className = `artist-card bg-gray-200 rounded-lg shadow-2xl overflow-hidden w-full sm:w-70 md:w-90 h-auto min-h-[22rem] 
+                              flex flex-col justify-start transition-all duration-300 opacity-0 fall-animation fall-delay-${(index % 8) + 1}`;
 
             card.innerHTML = `
                 <div class="relative flex flex-col h-full bg-gray-200 shadow-2xl rounded-lg p-4 min-h-[350px]">
@@ -134,7 +135,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         <p class="text-sm text-gray-600"><strong>Members:</strong> ${artist.artist.members.join(", ")}</p>
                     </div>
                     <div class="mt-auto flex flex-col justify-center pb-3">
-                        <button type="button" class="concert-dates-btn text-white bg-gradient-to-r from-gray-600 via-gray-800 to-black hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-gray-500 dark:focus:ring-gray-900 shadow-lg shadow-gray-600/50 dark:shadow-lg dark:shadow-gray-900/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                        <button type="button" class="concert-dates-btn text-white bg-gradient-to-r from-gray-600 via-gray-800 to-black 
+                                hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-gray-500 dark:focus:ring-gray-900 
+                                shadow-lg shadow-gray-600/50 dark:shadow-lg dark:shadow-gray-900/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                             View Concert Dates
                         </button>
                         <div class="concert-details hidden text-sm text-gray-700 mt-2 p-2 bg-white rounded-lg shadow-md"></div>
@@ -143,6 +146,11 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
 
             artistsContainer.appendChild(card);
+
+            // Ensure opacity transition happens
+            setTimeout(() => {
+                card.classList.remove("opacity-0");
+            }, 50);
         });
 
         adjustPaginationPosition();

@@ -7,30 +7,75 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="/assets/index.js" defer></script>
     <link rel="stylesheet" href="/assets/styles.css">
-</head>
-<body>
+    <style>
+        /* Fade-in Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
+        /* Floating Button Effect */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Background Zoom-in Effect */
+        @keyframes bgZoom {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        /* Apply fade-in on elements */
+        .fade-in {
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        /* Floating button effect */
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Background zoom-in effect */
+        .background-zoom {
+            animation: bgZoom 10s ease-in-out infinite alternate;
+        }
+
+        /* Smooth hover glow effect */
+        .hover-glow:hover {
+            box-shadow: 0px 0px 20px rgba(255, 223, 88, 0.6);
+        }
+    </style>
+
+</head>
+<body class="bg-gray-900" style="background-color: #2e2e2e;">
+
+<!-- Main Container -->
 <div class="relative h-screen text-white overflow-hidden">
-    <!-- Background Image -->
-    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
+    <!-- Background Image with Zoom Animation -->
+    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 background-zoom"
          style="background-image: url('https://images.unsplash.com/photo-1506499254543-b362909bf3b8?q=80&w=3569&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
-        <!-- Optional Overlay -->
         <div class="absolute inset-0 bg-black opacity-50"></div>
     </div>
 
     <!-- Foreground Content -->
     <div class="relative z-10 flex flex-col justify-center items-center h-full text-center">
-        <h1 class="text-5xl font-bold leading-tight mb-4">Welcome to Groupie Tracker</h1>
-        <p class="text-lg text-gray-300 mb-8">Discover a variety of artists and their upcoming concert locations.</p>
+        <h1 class="text-5xl font-bold leading-tight mb-4 fade-in" style="animation-delay: 0.2s;">
+            Welcome to Groupie Tracker
+        </h1>
+        <p class="text-lg text-gray-300 mb-8 fade-in" style="animation-delay: 0.5s;">
+            Discover a variety of artists and their upcoming concert locations.
+        </p>
         <button
-           id="getStartedButton"
-           class="bg-yellow-400 text-gray-900 hover:bg-yellow-300 py-2 px-6 rounded-full text-lg font-semibold transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg"
-            type="button">
+                id="getStartedButton"
+                class="bg-yellow-400 text-gray-900 py-2 px-6 rounded-full text-lg font-semibold transition duration-300
+                   ease-in-out transform hover:scale-105 hover:shadow-lg hover-glow floating"
+                type="button">
             Get Started
         </button>
     </div>
 </div>
+
 </body>
 </html>
-
-
