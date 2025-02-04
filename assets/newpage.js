@@ -2,8 +2,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const artistsContainer = document.getElementById("artists-container");
     const paginationControls = document.getElementById("pagination-controls");
     const loadingElement = document.createElement("div");
+    const modal = document.getElementById("large-modal");
+    const modalHeader = modal.querySelector("h3");
+    const modalBody = document.getElementById("modal-body-content");
 
-    const jsonURL = "http://localhost:8080/api/data"; // Path to the JSON URL
+    const jsonURL = "http://localhost:8080/api/data";
     let currentPage = 1;
     const itemsPerPage = 8;
     let artistsData = [];
@@ -28,43 +31,69 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // Adjust the pagination container to act as a footer
-    const adjustPaginationPosition = () => {
-        const viewportHeight = window.innerHeight;
-        const contentHeight = artistsContainer.scrollHeight + paginationControls.scrollHeight;
-
-        paginationControls.style.position = contentHeight < viewportHeight ? "fixed" : "static";
-        paginationControls.style.bottom = "0";
-        paginationControls.style.left = "0";
-        paginationControls.style.right = "0";
-        paginationControls.style.padding = "10px";
-    };
-
-    // Generate a list of locations and dates
     const generateConcertList = (relations) => {
-        if (!relations || Object.keys(relations).length === 0) return "<p>No concert data available.</p>";
+        if (!relations || Object.keys(relations).length === 0) {
+            return "<p class='text-gray-600 text-lg'>No concert data available.</p>";
+        }
 
-        return `<ul class='text-left'>${Object.entries(relations)
-            .map(([location, dates]) => `<li><strong>${location.replace(/_/g, " ")}</strong>: ${dates.join(", ")}</li>`)
-            .join("")}</ul>`;
+        return (
+            `<ul class="list-disc list-inside space-y-3 text-gray-800 text-lg">` +
+            Object.entries(relations)
+                .map(([location, dates]) => {
+                    const formattedLocation = location
+                        .split("_")
+                        .join(" ")
+                        .split("-")
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(", ");
+
+                    return `
+                        <li>
+                            <strong class="text-gray-900">${formattedLocation}:</strong>
+                            <ul class="list-none ml-4 mt-1">
+                                ${dates.map(date => `<li class="text-gray-700">• ${date.replace(/-/g, ".")}</li>`).join("")}
+                            </ul>
+                        </li>
+                    `;
+                })
+                .join("") +
+            `</ul>`
+        );
     };
 
     // Handle click events on dynamically added elements
     artistsContainer.addEventListener("click", (event) => {
         const target = event.target;
 
-        if (target.classList.contains("concert-dates-btn")) {
+        if (target.classList.contains("concert-dates-btn") || target.closest(".concert-dates-btn")) {
             const card = target.closest(".artist-card");
-            const detailsDiv = card.querySelector(".concert-details");
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const artistIndex = startIndex + Array.from(artistsContainer.children).indexOf(card);
+            const artistData = artistsData[artistIndex];
 
-            detailsDiv.classList.toggle("hidden");
+            if (artistData) {
+                modalHeader.textContent = `${artistData.artist.name} Concert Dates`;
+                modalBody.innerHTML = generateConcertList(artistData.relations);
 
-            if (!detailsDiv.classList.contains("hidden")) {
-                const artistIndex = [...artistsContainer.children].indexOf(card);
-                const artistData = artistsData[artistIndex];
-
-                if (artistData) detailsDiv.innerHTML = generateConcertList(artistData.relations);
+                modal.classList.remove("hidden");
+                setTimeout(() => modal.classList.add("opacity-100", "scale-100"), 50);
             }
+        }
+    });
+
+    // Event listener to close the modal when clicking any close button
+    document.querySelectorAll('[data-modal-hide]').forEach((closeBtn) => {
+        closeBtn.addEventListener("click", () => {
+            modal.classList.remove("opacity-100", "scale-100");
+            setTimeout(() => modal.classList.add("hidden"), 200);
+        });
+    });
+
+    // Close modal when clicking outside the modal content
+    modal.addEventListener("click", (event) => {
+        if (event.target === modal) {
+            modal.classList.remove("opacity-100", "scale-100");
+            setTimeout(() => modal.classList.add("hidden"), 200);
         }
     });
 
@@ -118,6 +147,18 @@ document.addEventListener("DOMContentLoaded", () => {
         adjustPaginationPosition();
     };
 
+    // Adjust the pagination container to act as a footer
+    const adjustPaginationPosition = () => {
+        const viewportHeight = window.innerHeight;
+        const contentHeight = artistsContainer.scrollHeight + paginationControls.scrollHeight;
+
+        paginationControls.style.position = contentHeight < viewportHeight ? "fixed" : "static";
+        paginationControls.style.bottom = "0";
+        paginationControls.style.left = "0";
+        paginationControls.style.right = "0";
+        paginationControls.style.padding = "10px";
+    };
+
     // Create pagination controls
     const renderPagination = (totalItems) => {
         const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -151,7 +192,6 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchArtistsWithRetry(jsonURL)
         .then((data) => {
             artistsData = data;
-
             if (!Array.isArray(artistsData)) throw new Error("Fetched data is not an array");
 
             loadingElement.remove();

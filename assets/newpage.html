@@ -8,19 +8,6 @@
     <!-- Link to the external JavaScript file -->
     <script src="newpage.js" defer></script>
 
-    <!-- CSS for correct card size and placement-->
-    <style>
-        .line-clamp-3 {
-            display: -webkit-box;
-            -webkit-line-clamp: 3; /* Limits text to 3 lines */
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .line-clamp-none {
-            -webkit-line-clamp: unset; /* Removes the limit when clicked */
-        }
-    </style>
 </head>
 <body class="bg-gray-200 min-h-screen flex flex-col">
 
@@ -32,16 +19,48 @@
 
 <!-- Dynamic Artist Cards Container -->
 <div class="" style="min-height: 80vh !important;">
-    <div id="artists-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6  items-start">
+    <div id="artists-container"
+         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6  items-start">
     </div>
 
-<!-- Pagination Container -->
-    <div id="pagination-container" class="w-full flex justify-center mb-6" style="bottom: 0 !important; position: fixed;">
+    <!-- Pagination Container -->
+    <div id="pagination-container" class="w-full flex justify-center mb-6"
+         style="bottom: 0 !important; position: fixed;">
         <div id="pagination-controls" class="flex flex-wrap justify-center gap-3 max-w-2xl mx-auto">
         </div>
     </div>
 </div>
 
+<!-- Large Modal -->
+<div id="large-modal" tabindex="-1"
+     class="fixed inset-0 flex items-center justify-center z-50 hidden backdrop-blur-lg bg-gray-900 bg-opacity-50 transition-opacity">
+    <div class="relative w-full max-w-3xl max-h-full px-4">
+        <!-- Modal content -->
+        <div class="relative bg-white rounded-xl shadow-2xl transform scale-95 transition-transform">
+            <!-- Modal header -->
+            <div class="flex items-center justify-between p-6 border-b border-gray-300">
+                <h3 class="text-3xl font-bold text-gray-900">
+                    Concert Dates
+                </h3>
+                <button type="button"
+                        class="text-gray-500 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center transition"
+                        data-modal-hide="large-modal">
+                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                         viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
+                </button>
+            </div>
+            <!-- Modal body -->
+            <div id="modal-body-content" class="p-6 space-y-4 text-gray-700 text-lg leading-relaxed">
+                <p class="text-gray-600">
+                    Loading concert dates...
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
