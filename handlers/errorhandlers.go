@@ -29,12 +29,12 @@ func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
 
 // serve 500 error page
 func InternalServerErrorHandler(w http.ResponseWriter, r *http.Request) {
-	templatePath := filepath.Join("assets", "404.html")
+	templatePath := filepath.Join("assets", "500.html")
 
 	tmpl, err := template.ParseFiles(templatePath)
 	if err != nil {
-		http.Error(w, "Could not load 404 template", http.StatusInternalServerError)
-		log.Println("Error loading 404 template:", err)
+		http.Error(w, "Could not load 500 template", http.StatusInternalServerError)
+		log.Println("Error loading 500 template:", err)
 		return
 	}
 	// set the HTTP status code to 500
