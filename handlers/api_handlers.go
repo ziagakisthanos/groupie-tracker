@@ -12,7 +12,7 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 	artistDetails, err := api.FetchAllData()
 	if err != nil {
 		log.Printf("Error fetching artist data %v\n", err)
-		http.Error(w, "Error fetching  data", http.StatusInternalServerError)
+		InternalServerErrorHandler(w, r)
 		return
 	}
 
@@ -23,6 +23,6 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 	// and write the result on ResponseWriter
 	if err := json.NewEncoder(w).Encode(artistDetails); err != nil {
 		log.Printf("Error encoding JSON: %v\n", err)
-		http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
+		InternalServerErrorHandler(w, r)
 	}
 }
