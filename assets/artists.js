@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     };
 
-    // Handle click events for opening the modal
+    // Handle click events for dynamically created artist cards
     artistsContainer.addEventListener("click", (event) => {
         const target = event.target;
         if (target.classList.contains("concert-dates-btn") || target.closest(".concert-dates-btn")) {
@@ -160,16 +160,36 @@ document.addEventListener("DOMContentLoaded", () => {
         adjustPaginationPosition();
     };
 
-    // Adjust the pagination container to act as a footer
-    const adjustPaginationPosition = () => {
-        const viewportHeight = window.innerHeight;
-        const contentHeight = artistsContainer.scrollHeight + paginationControls.scrollHeight;
+    // Fetch data and initialize the UI
+    fetchArtistsWithRetry(jsonURL)
+        .then((data) => {
+            artistsData = data;
+            if (!Array.isArray(artistsData)) throw new Error("Fetched data is not an array");
 
-        paginationControls.style.position = contentHeight < viewportHeight ? "fixed" : "static";
-        paginationControls.style.bottom = "0";
-        paginationControls.style.left = "0";
-        paginationControls.style.right = "0";
-        paginationControls.style.padding = "10px";
+            loadingElement.remove();
+            renderPage(currentPage);
+            renderPagination(artistsData.length);
+            adjustPaginationPosition();
+        })
+        .catch((error) => {
+            console.error("Error initializing artists:", error);
+            loadingElement.textContent = "Failed to load artist data. Please try again later.";
+        });
+
+    const adjustPaginationPosition = () => {
+        const artistsHeight = artistsContainer.scrollHeight;
+        const viewportHeight = window.innerHeight;
+        const paginationHeight = paginationControls.scrollHeight;
+
+        // Ensure pagination does not overlap artist cards
+        if (artistsHeight + paginationHeight < viewportHeight) {
+            paginationControls.style.position = "absolute"; // Stick it to the bottom
+            paginationControls.style.bottom = "0";
+            paginationControls.style.left = "0";
+            paginationControls.style.right = "0";
+        } else {
+            paginationControls.style.position = "relative"; // Move naturally with content
+        }
     };
 
     // Create pagination controls
@@ -191,28 +211,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // Handle pagination button clicks
     paginationControls.addEventListener("click", (event) => {
         const page = parseInt(event.target.getAttribute("data-page"), 10);
         if (page && page !== currentPage) {
             currentPage = page;
             renderPage(currentPage);
             renderPagination(artistsData.length);
+            adjustPaginationPosition(); //Ensures pagination remains at the bottom
         }
     });
 
-    // Fetch data and initialize the UI
-    fetchArtistsWithRetry(jsonURL)
-        .then((data) => {
-            artistsData = data;
-            if (!Array.isArray(artistsData)) throw new Error("Fetched data is not an array");
-
-            loadingElement.remove();
-            renderPage(currentPage);
-            renderPagination(artistsData.length);
-        })
-        .catch((error) => {
-            console.error("Error initializing artists:", error);
-            loadingElement.textContent = "Failed to load artist data. Please try again later.";
-        });
 });
