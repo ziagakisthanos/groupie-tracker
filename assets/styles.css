@@ -1,0 +1,25 @@
+/*Animation for cards*/
+
+@keyframes fallIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.fall-animation {
+    animation: fallIn 0.5s ease-out forwards;
+}
+
+/* Delay each artist for a cascading effect */
+.fall-delay-1 { animation-delay: 0.0s; }
+.fall-delay-2 { animation-delay: 0.0s; }
+.fall-delay-3 { animation-delay: 0.0s; }
+.fall-delay-4 { animation-delay: 0.0s; }
+.fall-delay-5 { animation-delay: 0s; }
+.fall-delay-6 { animation-delay: 0s; }
+.fall-delay-7 { animation-delay: 0s; }
+.fall-delay-8 { animation-delay: 0s; }
