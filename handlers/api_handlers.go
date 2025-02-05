@@ -12,7 +12,7 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 	artistDetails, err := api.FetchAllData()
 	if err != nil {
 		log.Printf("Error fetching artist data %v\n", err)
-		http.Error(w, "Error fetching artist data", http.StatusInternalServerError)
+		http.Error(w, "Error fetching  data", http.StatusInternalServerError)
 		return
 	}
 

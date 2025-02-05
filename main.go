@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"myapp/handlers"
@@ -8,24 +9,23 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"time"
 )
-
-//TODO: live url endpoints fix
 
 func main() {
 	// server setup
 	mux := http.NewServeMux()
-	// register homePage root path
-	mux.HandleFunc("/", handlers.HomePageHandler)
-	// JSON data path
-	mux.HandleFunc("/api/data", handlers.APIHandler)
-	// Serve the health check endpoint
-	http.HandleFunc("/health", handlers.HealthHandler)
 
 	// Serve static files from the "assets" folder
 	staticDir := filepath.Join("assets")
 	fs := http.FileServer(http.Dir(staticDir))
 	mux.Handle("/assets/", http.StripPrefix("/assets/", fs))
+
+	// register homePage root path
+	mux.HandleFunc("/", handlers.HomePageHandler)
+	mux.HandleFunc("/artists.html", handlers.ArtistsPageHandler)
+	// JSON data path
+	mux.HandleFunc("/api/data", handlers.APIHandler)
 
 	// defining server port
 	addr := ":8080"
@@ -38,7 +38,6 @@ func main() {
 
 	// custom channel to capture OS signals
 	stop := make(chan os.Signal, 1)
-
 	// notify the channel for interupt or termination signals
 	signal.Notify(stop, os.Interrupt)
 
@@ -57,8 +56,12 @@ func main() {
 	<-stop
 	log.Println("\nShutting down server...")
 
+	// add 5 second timeout as a layer before forcing shutdown
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	// attempt shutdown
-	if err := server.Close(); err != nil {
+	if err := server.Shutdown(ctx); err != nil {
 		fmt.Printf("❌ Error during server shutdown: %v\n", err)
 	}
 
