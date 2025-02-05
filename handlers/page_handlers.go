@@ -21,15 +21,15 @@ func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 	// parse the template
 	tmpl, err := template.ParseFiles(templatePath)
 	if err != nil {
-		http.Error(w, "Could not load template", http.StatusInternalServerError)
-		log.Println("Error loading template:", err)
+		http.Error(w, "Error loading homepage template", http.StatusInternalServerError)
+		InternalServerErrorHandler(w, r)
 		return
 	}
 
 	// execute the template
 	if err := tmpl.Execute(w, nil); err != nil {
-		http.Error(w, "Failed to render template", http.StatusInternalServerError)
-		log.Fatal("Failed to load template:", err)
+		http.Error(w, "Error rendering homepage template", http.StatusInternalServerError)
+		InternalServerErrorHandler(w, r)
 		return
 	}
 }
@@ -38,9 +38,7 @@ func ArtistsPageHandler(w http.ResponseWriter, r *http.Request) {
 	// fetch artist data
 	artistDetails, err := api.FetchAllData()
 	if err != nil {
-		http.Error(w, "Error fetching artist data", http.StatusInternalServerError)
-		log.Printf("Error fetching artists: %v\n", err)
-		return
+		InternalServerErrorHandler(w, r)
 	}
 
 	// template file path
@@ -49,16 +47,16 @@ func ArtistsPageHandler(w http.ResponseWriter, r *http.Request) {
 	// parse the template
 	tmpl, err := template.ParseFiles(templatePath)
 	if err != nil {
-		http.Error(w, "Could not load template", http.StatusInternalServerError)
-		log.Println("Error loading template:", err)
+		InternalServerErrorHandler(w, r)
+		log.Println("Error loading artists template:", err)
 		return
 	}
 
 	// execute the template
 	// using the combined data (use `nil` if no data)
 	if err := tmpl.Execute(w, artistDetails); err != nil {
-		http.Error(w, "Failed to render template", http.StatusInternalServerError)
-		log.Fatal("Failed to load template:", err)
+		InternalServerErrorHandler(w, r)
+		log.Fatal("Failed to render artists template:", err)
 		return
 	}
 }
