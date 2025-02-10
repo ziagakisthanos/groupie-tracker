@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 )
 
@@ -13,24 +14,14 @@ func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 		NotFoundHandler(w, r)
 		return
 	}
-
 	// template file path
 	templatePath := filepath.Join("assets", "index.html")
-
-	// parse the template
-	tmpl, err := template.ParseFiles(templatePath)
+	_, err := os.Stat(templatePath)
 	if err != nil {
-		http.Error(w, "Error loading homepage template", http.StatusInternalServerError)
 		InternalServerErrorHandler(w, r)
-		return
 	}
 
-	// execute the template
-	if err := tmpl.Execute(w, nil); err != nil {
-		http.Error(w, "Error rendering homepage template", http.StatusInternalServerError)
-		InternalServerErrorHandler(w, r)
-		return
-	}
+	http.ServeFile(w, r, templatePath)
 }
 
 func ArtistsPageHandler(w http.ResponseWriter, r *http.Request) {
