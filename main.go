@@ -23,7 +23,7 @@ func main() {
 
 	// register homePage root path
 	mux.HandleFunc("/", handlers.HomePageHandler)
-	mux.HandleFunc("/artists.html", handlers.ArtistsPageHandler)
+	mux.HandleFunc("/artists", handlers.ArtistsPageHandler)
 	// JSON data path
 	mux.HandleFunc("/api/data", handlers.APIHandler)
 

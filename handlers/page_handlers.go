@@ -3,7 +3,6 @@ package handlers
 import (
 	"html/template"
 	"log"
-	"myapp/api"
 	"net/http"
 	"path/filepath"
 )
@@ -35,12 +34,6 @@ func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ArtistsPageHandler(w http.ResponseWriter, r *http.Request) {
-	// fetch artist data
-	artistDetails, err := api.FetchAllData()
-	if err != nil {
-		InternalServerErrorHandler(w, r)
-	}
-
 	// template file path
 	templatePath := filepath.Join("assets", "artists.html")
 
@@ -54,7 +47,7 @@ func ArtistsPageHandler(w http.ResponseWriter, r *http.Request) {
 
 	// execute the template
 	// using the combined data (use `nil` if no data)
-	if err := tmpl.Execute(w, artistDetails); err != nil {
+	if err := tmpl.Execute(w, nil); err != nil {
 		InternalServerErrorHandler(w, r)
 		log.Fatal("Failed to render artists template:", err)
 		return

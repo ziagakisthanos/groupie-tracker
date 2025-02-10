@@ -7,6 +7,7 @@ import (
 )
 
 func FetchAllData() ([]ArtistDetails, error) {
+	fmt.Println("fetching data")
 	// Fetch artists data
 	var artists []Artist
 	if err := FetchData("https://groupietrackers.herokuapp.com/api/artists", &artists); err != nil {
