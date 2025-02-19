@@ -7,21 +7,13 @@ import (
 	"net/http"
 )
 
-func APIHandler(w http.ResponseWriter, r *http.Request) {
-	// fetch artist data
-	artistDetails, err := api.FetchAllData()
-	if err != nil {
-		log.Printf("Error fetching artist data %v\n", err)
-		InternalServerErrorHandler(w, r)
-		return
-	}
-
+func DataHandler(w http.ResponseWriter, r *http.Request, data []api.ArtistDetails) {
 	// set the metadata response format to JSON (MIME type)
 	w.Header().Set("Content-Type", "application/json")
 
 	// convert GO data structs,maps,slices,etc. into JSON format
 	// and write the result on ResponseWriter
-	if err := json.NewEncoder(w).Encode(artistDetails); err != nil {
+	if err := json.NewEncoder(w).Encode(data); err != nil {
 		log.Printf("Error encoding JSON: %v\n", err)
 		InternalServerErrorHandler(w, r)
 	}
