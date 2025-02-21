@@ -1,0 +1,46 @@
+<!-- Search Bar -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Bar Test</title>
+    <script src="/assets/searchbar.js" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+
+<!-- Search Bar Wrapper-->
+<div class="relative z-20 w-full flex justify-end px-6 mt-4">
+    <form id="search-form" class="max-w-md w-full sm:w-96">
+        <div id="search-container"
+             class="relative flex items-center w-full bg-gray-100 border border-gray-300 rounded-lg shadow-md
+                   focus-within:ring-2 focus-within:ring-gray-500 focus-within:border-gray-500 transition-all">
+
+            <!-- Search Icon-->
+            <button id="search-icon" type="button"
+                    class="absolute inset-y-0 left-3 flex items-center cursor-pointer focus:outline-none">
+                <svg class="w-5 h-5 text-gray-500 hover:text-gray-700 transition"
+                     aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 20 20">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                          stroke-width="2" d="M19 19l-4-4m0-7A7 7 0 1 1 1 8a7 7 0 1 1 14 0Z"/>
+                </svg>
+            </button>
+
+            <!-- Search Input Field -->
+            <input type="search" id="search-input"
+                   class="w-full h-12 px-3 pl-10 text-sm text-gray-900 bg-gray-100 border-none rounded-lg
+                       focus:ring-0 outline-none"
+                   placeholder="Search artists, members, locations..."
+                   autocomplete="off"
+                   required
+            />
+
+            <!-- Search Button-->
+            <button type="submit" id="search-btn"
+                    class="px-5 h-10 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-lg text-sm
+                       transition-all cursor-pointer mr-2">
+                Search
+            </button>
+        </div>
+    </form>
+</div>

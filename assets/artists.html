@@ -8,12 +8,14 @@
     <!-- Link to the external JavaScript file -->
     <script src="/assets/artists.js" defer></script>
     <link rel="stylesheet" href="/assets/styles.css">
-
 </head>
 <body class="bg-gray-200 min-h-screen flex flex-col">
 
+<!-- Container for the Search Bar -->
+<div id="search-bar-container" class="absolute top-[100px] right-6 w-auto"></div>
+
 <!-- Header Section -->
-<div class="relative z-10 flex flex-col justify-center items-center text-center pt-8">
+<div class="relative z-10 flex flex-col justify-center items-center text-center pt-6">
     <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-2 text-gray-800">Artists</h1>
     <p class="text-base sm:text-lg md:text-xl text-gray-600 mb-4">Discover legendary artists and their music.</p>
 </div>
@@ -59,6 +61,24 @@
         </div>
     </div>
 </div>
+
+<!-- Script to import searchbar.html -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch("assets/searchbar.html")
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to load searchbar.html");
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    document.getElementById("search-bar-container").innerHTML = html;
+                })
+                .catch(err => console.error("Error loading searchbar.html:", err));
+        });
+    </script>
+
 
 </body>
 </html>
