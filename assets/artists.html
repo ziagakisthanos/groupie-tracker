@@ -7,12 +7,22 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Link to the external JavaScript file -->
     <script src="/assets/artists.js" defer></script>
+    <script src="/assets/filters.js" defer></script>
     <link rel="stylesheet" href="/assets/styles.css">
 </head>
 <body class="bg-gray-200 min-h-screen flex flex-col">
 
 <!-- Container for the Search Bar -->
 <div id="search-bar-container" class="absolute top-[100px] right-6 w-auto"></div>
+
+<!-- Filters toggle button -->
+<button id="toggle-filters"
+        class="fixed top-[120px] left-6 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-gray-700 z-50">
+    Filters
+</button>
+
+<!-- Container for Filters -->
+<div id="filters-container"></div>
 
 <!-- Header Section -->
 <div class="relative z-10 flex flex-col justify-center items-center text-center pt-6">
@@ -79,6 +89,22 @@
         });
     </script>
 
+<!-- Script to import filters.html -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        fetch("assets/filters.html")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to load filters.html");
+                }
+                return response.text();
+            })
+            .then(html => {
+                document.getElementById("filters-container").innerHTML = html;
+            })
+            .catch(err => console.error("Error loading filters.html:", err));
+    });
+</script>
 
 </body>
 </html>

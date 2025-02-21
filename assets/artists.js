@@ -199,17 +199,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
         for (let i = 1; i <= totalPages; i++) {
             const button = document.createElement("button");
-            button.className = "px-4 py-2 mx-1 bg-gray-500 text-white rounded hover:bg-yellow-300";
+            button.className = "pagination-btn px-4 py-2 mx-1 bg-gray-500 text-white rounded hover:bg-yellow-300";
             button.textContent = i;
             button.setAttribute("data-page", i);
 
+            // Ensure the active page remains highlighted in yellow
             if (i === currentPage) {
-                button.classList.add("text-black", "bg-yellow-400");
+                button.classList.add("active"); // Keep the current page highlighted
             }
+
+            button.addEventListener("click", () => {
+                if (currentPage !== i) {
+                    currentPage = i;
+                    renderPage(currentPage);
+                    renderPagination(artistsData.length);
+                }
+            });
 
             paginationControls.appendChild(button);
         }
     };
+
 
     paginationControls.addEventListener("click", (event) => {
         const page = parseInt(event.target.getAttribute("data-page"), 10);
