@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let artistsData = [];
     let currentArtist = null; // Stores the currently selected artist
 
-    // 1. Fetch artist data with retry logic
+    // Fetch artist data with retry logic
     const fetchArtistsWithRetry = async (url, retries = 5, delay = 1000) => {
         for (let i = 0; i < retries; i++) {
             try {
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // 2. Function to fill the dropdown for the chosen category
+    // Function to fill the dropdown for the chosen category
     function updateDropdownContent(dropdown, category, artistData) {
         let content = "";
         if (category === "firstAlbum") {
@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
         dropdown.innerHTML = content;
     }
 
-    // 3. Listen for clicks on category items (dropdown behavior)
+    // Listen for clicks on category items (dropdown behavior)
     if (categoryList) {
         categoryList.addEventListener("click", (event) => {
             const categoryItem = event.target.closest(".category-item");
@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 4. Generate a list of concert dates
+    // Generate a list of concert dates
     function generateConcertList(relations) {
         if (!relations || Object.keys(relations).length === 0) {
             return "<p class='text-gray-600'>No concert data available.</p>";
@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
       </ul>`;
     }
 
-    // 5. Open the modal with the given artist data
+    // Open the modal with the given artist data
     function openArtistModal(artistData) {
         currentArtist = artistData;
         // Update modal header to show artist name (without creation date here)
@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 10);
     }
 
-    // 6. Close the modal
+    // Close the modal
     function closeModal() {
         modal.classList.remove("opacity-100", "scale-100");
         modal.classList.add("opacity-0", "scale-95");
@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 200);
     }
 
-    // 7. Close button and overlay click to close modal
+    // Close button and overlay click to close modal
     modalClose.addEventListener("click", closeModal);
     modal.addEventListener("click", (e) => {
         if (e.target === modal) {
@@ -133,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // 8. Hook up "View Details" button for each artist card
+    // Hook up "View Details" button for each artist card
     artistsContainer.addEventListener("click", (event) => {
         const target = event.target;
         if (target.classList.contains("view-details-btn") || target.closest(".view-details-btn")) {
@@ -149,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // 9. Render artists for the current page
+    // Render artists for the current page
     function renderPage(page) {
         if (!Array.isArray(artistsData)) {
             console.error("artistsData is not an array:", artistsData);
@@ -200,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
         adjustPaginationPosition();
     }
 
-    // 10. Create pagination controls
+    // Create pagination controls
     function renderPagination(totalItems) {
         const totalPages = Math.ceil(totalItems / itemsPerPage);
         paginationControls.innerHTML = "";
@@ -224,7 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 11. Adjust pagination position (optional styling logic)
+    // Adjust pagination position
     function adjustPaginationPosition() {
         const artistsHeight = artistsContainer.scrollHeight;
         const viewportHeight = window.innerHeight;
@@ -239,7 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 12. Handle clicks on pagination container
+    // Handle clicks on pagination container
     paginationControls.addEventListener("click", (event) => {
         const page = parseInt(event.target.getAttribute("data-page"), 10);
         if (page && page !== currentPage) {
@@ -250,7 +250,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // 13. Fetch data and initialize UI
+    // Fetch data and initialize UI
     fetchArtistsWithRetry(jsonURL)
         .then((data) => {
             artistsData = data;
