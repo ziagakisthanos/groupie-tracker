@@ -45,6 +45,21 @@ document.addEventListener("DOMContentLoaded", () => {
             locationDropdown.classList.toggle("hidden");
         });
 
+        // ✅ Update Member Checkbox Selection with More Visible Color
+        membersCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", () => {
+                if (checkbox.checked) {
+                    // When checked, set a more visible blue background
+                    checkbox.parentElement.classList.remove("bg-gray-100");
+                    checkbox.parentElement.classList.add("bg-blue-300");
+                } else {
+                    // Restore the default background when unchecked
+                    checkbox.parentElement.classList.remove("bg-blue-300");
+                    checkbox.parentElement.classList.add("bg-gray-100");
+                }
+            });
+        });
+
         function validateRangeInput(startInput, endInput, startDisplay, endDisplay) {
             startInput.addEventListener("input", () => {
                 if (parseInt(startInput.value) > parseInt(endInput.value)) {
@@ -67,17 +82,45 @@ document.addEventListener("DOMContentLoaded", () => {
         validateRangeInput(creationStart, creationEnd, creationStartValue, creationEndValue);
         validateRangeInput(albumStart, albumEnd, albumStartValue, albumEndValue);
 
-        // ✅ Fix Checkbox Selection for Members
-        membersCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener("change", () => {
-                checkbox.parentElement.classList.toggle("bg-gray-300", checkbox.checked);
-            });
-        });
-
         // ✅ Apply Filters When Button is Clicked
         applyFiltersBtn.addEventListener("click", () => {
             updateFilters();
         });
+
+        // ✅ Clear Filters Functionality
+        const clearFiltersBtn = document.getElementById("clear-filters");
+        if (clearFiltersBtn) {
+            clearFiltersBtn.addEventListener("click", () => {
+                console.log("Clear button clicked");
+                // Reset range inputs to default values
+                creationStart.value = "1950";
+                creationEnd.value = "2025";
+                albumStart.value = "1950";
+                albumEnd.value = "2025";
+
+                // Update display spans for range inputs
+                creationStartValue.textContent = creationStart.value;
+                creationEndValue.textContent = creationEnd.value;
+                albumStartValue.textContent = albumStart.value;
+                albumEndValue.textContent = albumEnd.value;
+
+                // Uncheck all member checkboxes and restore default background
+                membersCheckboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                    checkbox.parentElement.classList.remove("bg-blue-300");
+                    checkbox.parentElement.classList.add("bg-gray-100");
+                });
+                // Uncheck all location checkboxes and restore default background if applied
+                locationCheckboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                    checkbox.parentElement.classList.remove("bg-blue-300");
+                    checkbox.parentElement.classList.add("bg-gray-100");
+                });
+                console.log("Filters cleared");
+            });
+        } else {
+            console.error("Clear Filters button not found.");
+        }
 
         // ✅ Function to Filter Artists
         function updateFilters() {

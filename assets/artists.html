@@ -10,17 +10,36 @@
     <script src="/assets/filters.js" defer></script>
     <link rel="stylesheet" href="/assets/styles.css">
 </head>
+
 <body class="bg-gray-200 min-h-screen flex flex-col">
+
+<header class="bg-gray-800 text-white">
+    <div class="w-full flex justify-between items-center px-7 py-4">
+        <!-- Logo and Site Name (Left-Aligned) -->
+        <a href="/" class="flex items-center text-2xl font-bold hover:text-yellow-200">
+            <img src="assets/play.png" alt="Logo" class="h-8 w-auto mr-2">
+            Groupie Tracker
+        </a>
+        <!-- Navigation Links -->
+        <nav>
+            <ul class="flex space-x-6">
+                <li><a href="/" class="hover:text-yellow-200">Home</a></li>
+                <li><a href="/about.html" class="hover:text-yellow-200">About Us</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
 
 <!-- Container for the Search Bar -->
 <div id="search-bar-container" class="absolute top-[100px] right-6 w-auto"></div>
 
 <!-- Filters toggle button -->
-<button id="toggle-filters"
-        class="fixed top-[120px] left-6 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-gray-700 z-50">
-    Filters
-</button>
-
+<div class="w-sm">
+    <button id="toggle-filters"
+            class="relative top-[120px] left-6 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-gray-700 z-50">
+        Filters
+    </button>
+</div>
 <!-- Container for Filters -->
 <div id="filters-container"></div>
 
@@ -73,21 +92,21 @@
 </div>
 
 <!-- Script to import searchbar.html -->
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            fetch("assets/searchbar.html")
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Failed to load searchbar.html");
-                    }
-                    return response.text();
-                })
-                .then(html => {
-                    document.getElementById("search-bar-container").innerHTML = html;
-                })
-                .catch(err => console.error("Error loading searchbar.html:", err));
-        });
-    </script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        fetch("assets/searchbar.html")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to load searchbar.html");
+                }
+                return response.text();
+            })
+            .then(html => {
+                document.getElementById("search-bar-container").innerHTML = html;
+            })
+            .catch(err => console.error("Error loading searchbar.html:", err));
+    });
+</script>
 
 <!-- Script to import filters.html -->
 <script>
@@ -108,3 +127,12 @@
 
 </body>
 </html>
+
+<footer class="bg-[#FACC13] text-black py-3 mt-8">
+    <div class="container mx-auto text-center">
+        <p>&copy; <span id="current-year"></span> Groupie Tracker. All rights reserved.</p>
+    </div>
+</footer>
+<script>
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+</script>

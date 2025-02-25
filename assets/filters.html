@@ -74,13 +74,21 @@
                         <input type="checkbox" class="hidden members-checkbox" value="4">
                         <span class="text-md font-semibold text-gray-800">4</span>
                     </label>
-                    <label class="flex items-center justify-center p-1 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200 active:bg-gray-500">
+                    <label class="flex items-center justify-center p-1 bg-gray-400 rounded-lg cursor-pointer hover:bg-gray-200 active:bg-gray-500">
                         <input type="checkbox" class="hidden members-checkbox" value="5">
                         <span class="text-md font-semibold text-gray-800">5</span>
                     </label>
                     <label class="flex items-center justify-center p-1 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200 active:bg-gray-500">
                         <input type="checkbox" class="hidden members-checkbox" value="6">
                         <span class="text-md font-semibold text-gray-800">6</span>
+                    </label>
+                    <label class="flex items-center justify-center p-1 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200 active:bg-gray-500">
+                        <input type="checkbox" class="hidden members-checkbox" value="7">
+                        <span class="text-md font-semibold text-gray-800">7</span>
+                    </label>
+                    <label class="flex items-center justify-center p-1 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200 active:bg-gray-500">
+                        <input type="checkbox" class="hidden members-checkbox" value="8">
+                        <span class="text-md font-semibold text-gray-800">8</span>
                     </label>
                 </div>
 
@@ -136,12 +144,13 @@
             filtersOverlay.classList.add("hidden");
         });
 
-        // Toggle for location dropdown (if needed)
+        // Toggle for location dropdown
         const locationToggle = document.getElementById("location-filter-toggle");
         const locationDropdown = document.getElementById("location-dropdown");
         locationToggle.addEventListener("click", function() {
             locationDropdown.classList.toggle("hidden");
         });
+
     });
 </script>
 
