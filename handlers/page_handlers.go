@@ -4,7 +4,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"os"
 	"path/filepath"
 )
 
@@ -16,11 +15,6 @@ func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	// template file path
 	templatePath := filepath.Join("assets", "index.html")
-	_, err := os.Stat(templatePath)
-	if err != nil {
-		InternalServerErrorHandler(w, r)
-	}
-
 	http.ServeFile(w, r, templatePath)
 }
 

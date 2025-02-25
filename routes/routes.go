@@ -23,6 +23,8 @@ func SetupRoutes() *http.ServeMux {
 		// serve the preFetched data
 		handlers.DataHandler(w, r, api.GetPrefetchedArtists())
 	})
+	// New route for search functionality, passing the prefetched artists
+	mux.HandleFunc("/api/search", handlers.SearchHandler)
 
 	return mux
 }
