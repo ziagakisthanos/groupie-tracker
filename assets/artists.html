@@ -8,6 +8,7 @@
     <!-- Link to the external JavaScript file -->
     <script src="/assets/artists.js" defer></script>
     <script src="/assets/filters.js" defer></script>
+    <script src="/assets/searchbar.js" defer></script>
     <link rel="stylesheet" href="/assets/styles.css">
 </head>
 
@@ -15,16 +16,17 @@
 
 <header class="bg-gray-800 text-white">
     <div class="w-full flex justify-between items-center px-7 py-4">
-        <!-- Logo and Site Name (Left-Aligned) -->
+        <!-- Logo and Site Name -->
         <a href="/" class="flex items-center text-2xl font-bold hover:text-yellow-200">
-            <img src="assets/play.png" alt="Logo" class="h-8 w-auto mr-2">
+            <img src="/assets/play.png" alt="Logo" class="h-8 w-auto mr-2">
             Groupie Tracker
         </a>
         <!-- Navigation Links -->
         <nav>
             <ul class="flex space-x-6">
                 <li><a href="/" class="hover:text-yellow-200">Home</a></li>
-                <li><a href="/about.html" class="hover:text-yellow-200">About Us</a></li>
+                <li><a href="/assets/artists.html" class="hover:text-yellow-200">Artists</a></li>
+                <li><a href="/assets/about.html" class="hover:text-yellow-200">About Us</a></li>
             </ul>
         </nav>
     </div>
@@ -32,6 +34,7 @@
 
 <!-- Container for the Search Bar -->
 <div id="search-bar-container" class="absolute top-[100px] right-6 w-auto"></div>
+
 
 <!-- Filters toggle button -->
 <div class="w-sm">
@@ -94,7 +97,7 @@
 <!-- Script to import searchbar.html -->
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        fetch("assets/searchbar.html")
+        fetch("/assets/searchbar.html")
             .then(response => {
                 if (!response.ok) {
                     throw new Error("Failed to load searchbar.html");

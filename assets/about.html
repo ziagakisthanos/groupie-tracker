@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>About Us - Groupie Tracker</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .fade-in {
+            animation: fadeIn 1s ease-in-out forwards;
+        }
+
+        /* Each card gets its own perspective */
+        .flip-card {
+            perspective: 1000px;
+        }
+        /* Inner container that flips */
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s ease-in-out;
+            transform-style: preserve-3d;
+        }
+        /* On hover, rotate the inner container */
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        /* Front and back sides of the card */
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 9999px; /* Fully rounded */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Back side is rotated so that it shows when flipped */
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800">
+
+<!-- Header -->
+<header class="bg-gray-800 text-white">
+    <div class="w-full flex justify-between items-center px-7 py-4">
+        <!-- Logo and Site Name -->
+        <a href="/" class="flex items-center text-2xl font-bold hover:text-yellow-200">
+            <img src="/assets/play.png" alt="Logo" class="h-8 w-auto mr-2">
+            Groupie Tracker
+        </a>
+        <!-- Navigation Links -->
+        <nav>
+            <ul class="flex space-x-6">
+                <li><a href="/" class="hover:text-yellow-200">Home</a></li>
+                <li><a href="/assets/artists.html" class="hover:text-yellow-200">Artists</a></li>
+                <li><a href="/assets/about.html" class="hover:text-yellow-200">About Us</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<!-- Intro Section -->
+<section class="bg-white flex flex-col items-center text-center py-10">
+    <!-- Main Heading -->
+    <h1 class="text-5xl font-extrabold text-yellow-400 fade-in" style="text-shadow: 3px 3px 6px rgba(73,73,73,0.62);">
+        Branding &amp; Design
+    </h1>
+    <!-- Subtitle -->
+    <p class="text-xl text-gray-800 font-semibold mt-3">
+        Where Legendary Artists Come to Life
+    </p>
+    <!-- Large Team Image -->
+    <img
+            src="/assets/team.png"
+            alt="Team"
+            class="h-96 w-auto mt-6">
+</section>
+
+<!-- Meet the Team Section -->
+<section class="container mx-auto px-6 py-12">
+    <div class="max-w-3xl mx-auto text-center mb-10">
+        <h2 class="text-4xl font-bold tracking-wider">Meet the Team</h2>
+        <p class="text-gray-700 text-lg mt-4">
+            We’re a team of two aspiring developers with a passion for music and technology. Working together on Groupie Tracker, we combine our skills in coding, design, and innovation to bring you an engaging platform to explore legendary artists.
+        </p>
+    </div>
+
+    <!-- Grid for 2 members, centered in each column -->
+    <div class="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 justify-items-center py-10">
+        <!-- Member Card 1 -->
+        <div class="flex flex-col items-center text-center">
+            <!-- Image Wrapper with Hover Effects -->
+            <div class="transition-transform duration-300 ease-in-out hover:scale-110 hover:-translate-y-2">
+                <img src="/assets/woman.png"
+                     alt="Woman"
+                     class="rounded-full w-32 h-32 object-cover border-4 border-[#FACC13]">
+            </div>
+            <h3 class="text-xl font-semibold mt-4">Maria</h3>
+            <p class="text-sm text-gray-600">
+               " I am an aspiring developer with a keen eye for design and a deep love for music. I lead the design efforts and work on coding the user interface for Groupie Tracker, ensuring an engaging experience for our users."
+            </p>
+        </div>
+
+        <!-- Member Card 2 -->
+        <div class="flex flex-col items-center text-center">
+            <!-- Image Wrapper with Hover Effects -->
+            <div class="transition-transform duration-300 ease-in-out hover:scale-110 hover:-translate-y-2">
+                <img src="/assets/man.png"
+                     alt="Man"
+                     class="rounded-full w-32 h-32 object-cover border-4 border-[#FACC13]">
+            </div>
+            <h3 class="text-xl font-semibold mt-4">Thanos</h3>
+            <p class="text-sm text-gray-600">
+                "I am an aspiring developer focused on building robust backend solutions and innovative features. Alongside my partner, I contribute to the technical side of Groupie Tracker, striving to create a seamless and dynamic user experience."
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="bg-gray-100 py-0">
+    <div class="max-w-4xl mx-auto relative h-80">
+        <!-- Flip Card 1: DISCOVER -->
+        <div id="flip-discover" class="flip-card absolute top-1/2 left-1/4 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 cursor-pointer">
+            <div class="flip-card-inner rounded-full">
+                <!-- Front Side -->
+                <div class="flip-card-front bg-[#FACC13] flex items-center justify-center text-gray-800 text-xl font-bold text-center">
+                    DISCOVER
+                </div>
+                <!-- Back Side -->
+                <div class="flip-card-back bg-gray-800 border-4 border-gray-800 flex items-center justify-center text-[#FACC13] text-xl font-bold text-center">
+                    We Discover New Talent
+                </div>
+            </div>
+        </div>
+        <!-- Flip Card 2: RESEARCH -->
+        <div id="flip-research" class="flip-card absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 cursor-pointer">
+            <div class="flip-card-inner rounded-full">
+                <div class="flip-card-front bg-[#FACC13] flex items-center justify-center text-gray-800 text-xl font-bold text-center">
+                    RESEARCH
+                </div>
+                <div class="flip-card-back bg-gray-800 border-4 border-gray-800 flex items-center justify-center text-[#FACC13] text-xl font-bold text-center">
+                    We Research Deeply
+                </div>
+            </div>
+        </div>
+        <!-- Flip Card 3: DELIVER -->
+        <div id="flip-deliver" class="flip-card absolute top-1/2 left-3/4 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 cursor-pointer">
+            <div class="flip-card-inner rounded-full">
+                <div class="flip-card-front bg-[#FACC13] flex items-center justify-center text-gray-800 text-xl font-bold text-center">
+                    DELIVER
+                </div>
+                <div class="flip-card-back bg-gray-800 border-4 border-gray-800 flex items-center justify-center text-[#FACC13] text-xl font-bold text-center">
+                    We Deliver Excellence
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Philosophy -->
+<section class="container mx-auto py-16 px-6 text-center">
+    <h2 class="text-3xl font-bold mb-4 tracking-wider py-4">Our Philosophy</h2>
+    <p class="text-gray-700 max-w-2xl mx-auto">
+        We believe in honoring the roots of music by bringing fans closer to the artists’ journeys. Our platform offers a curated space where history, discography, and stories merge.
+    </p>
+</section>
+
+<!-- Footer -->
+<footer class="bg-[#FACC13] text-black py-3">
+    <div class="container mx-auto text-center">
+        <p>&copy; <span id="current-year"></span> Groupie Tracker. All rights reserved.</p>
+    </div>
+</footer>
+<script>
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
