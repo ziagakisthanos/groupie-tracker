@@ -51,10 +51,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (checkbox.checked) {
                     // When checked, set a more visible blue background
                     checkbox.parentElement.classList.remove("bg-gray-100");
-                    checkbox.parentElement.classList.add("bg-blue-300");
+                    checkbox.parentElement.classList.add("bg-yellow-300");
                 } else {
                     // Restore the default background when unchecked
-                    checkbox.parentElement.classList.remove("bg-blue-300");
+                    checkbox.parentElement.classList.remove("bg-yellow-300");
                     checkbox.parentElement.classList.add("bg-gray-100");
                 }
             });
@@ -107,13 +107,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Uncheck all member checkboxes and restore default background
                 membersCheckboxes.forEach(checkbox => {
                     checkbox.checked = false;
-                    checkbox.parentElement.classList.remove("bg-blue-300");
+                    checkbox.parentElement.classList.remove("bg-yellow-300");
                     checkbox.parentElement.classList.add("bg-gray-100");
                 });
                 // Uncheck all location checkboxes and restore default background if applied
                 locationCheckboxes.forEach(checkbox => {
                     checkbox.checked = false;
-                    checkbox.parentElement.classList.remove("bg-blue-300");
+                    checkbox.parentElement.classList.remove("bg-yellow-300");
                     checkbox.parentElement.classList.add("bg-gray-100");
                 });
                 console.log("Filters cleared");

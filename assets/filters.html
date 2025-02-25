@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Filters Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -56,60 +56,61 @@
             </div>
 
             <!-- Number of Members Filter -->
-                <label class="text-sm font-medium mt-4 block">Number of Members</label>
-                <div id="members-checkboxes" class="grid grid-cols-3 gap-2 mt-2">
-                    <label class="flex items-center justify-center p-1 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200 active:bg-gray-500">
-                        <input type="checkbox" class="hidden members-checkbox" value="1">
-                        <span class="text-md font-semibold text-gray-800">1</span>
-                    </label>
-                    <label class="flex items-center justify-center p-1 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200 active:bg-gray-500">
-                        <input type="checkbox" class="hidden members-checkbox" value="2">
-                        <span class="text-md font-semibold text-gray-800">2</span>
-                    </label>
-                    <label class="flex items-center justify-center p-1 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200 active:bg-gray-500">
-                        <input type="checkbox" class="hidden members-checkbox" value="3">
-                        <span class="text-md font-semibold text-gray-800">3</span>
-                    </label>
-                    <label class="flex items-center justify-center p-1 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200 active:bg-gray-500">
-                        <input type="checkbox" class="hidden members-checkbox" value="4">
-                        <span class="text-md font-semibold text-gray-800">4</span>
-                    </label>
-                    <label class="flex items-center justify-center p-1 bg-gray-400 rounded-lg cursor-pointer hover:bg-gray-200 active:bg-gray-500">
-                        <input type="checkbox" class="hidden members-checkbox" value="5">
-                        <span class="text-md font-semibold text-gray-800">5</span>
-                    </label>
-                    <label class="flex items-center justify-center p-1 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200 active:bg-gray-500">
-                        <input type="checkbox" class="hidden members-checkbox" value="6">
-                        <span class="text-md font-semibold text-gray-800">6</span>
-                    </label>
-                    <label class="flex items-center justify-center p-1 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200 active:bg-gray-500">
-                        <input type="checkbox" class="hidden members-checkbox" value="7">
-                        <span class="text-md font-semibold text-gray-800">7</span>
-                    </label>
-                    <label class="flex items-center justify-center p-1 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200 active:bg-gray-500">
-                        <input type="checkbox" class="hidden members-checkbox" value="8">
-                        <span class="text-md font-semibold text-gray-800">8</span>
-                    </label>
-                </div>
+            <label class="text-sm font-medium mt-4 block">Number of Members</label>
+            <div id="members-checkboxes" class="grid grid-cols-4 gap-2 mt-2">
+                <label class="flex items-center justify-center p-2 bg-gray-100 border border-gray-200 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors duration-200">
+                    <input type="checkbox" class="hidden members-checkbox" value="1">
+                    <span class="text-md font-semibold text-gray-800">1</span>
+                </label>
+                <label class="flex items-center justify-center p-2 bg-gray-100 border border-gray-200 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors duration-200">
+                    <input type="checkbox" class="hidden members-checkbox" value="2">
+                    <span class="text-md font-semibold text-gray-800">2</span>
+                </label>
+                <label class="flex items-center justify-center p-2 bg-gray-100 border border-gray-200 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors duration-200">
+                    <input type="checkbox" class="hidden members-checkbox" value="3">
+                    <span class="text-md font-semibold text-gray-800">3</span>
+                </label>
+                <label class="flex items-center justify-center p-2 bg-gray-100 border border-gray-200 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors duration-200">
+                    <input type="checkbox" class="hidden members-checkbox" value="4">
+                    <span class="text-md font-semibold text-gray-800">4</span>
+                </label>
+                <label class="flex items-center justify-center p-2 bg-gray-100 border border-gray-200 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors duration-200">
+                    <input type="checkbox" class="hidden members-checkbox" value="5">
+                    <span class="text-md font-semibold text-gray-800">5</span>
+                </label>
+                <label class="flex items-center justify-center p-2 bg-gray-100 border border-gray-200 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors duration-200">
+                    <input type="checkbox" class="hidden members-checkbox" value="6">
+                    <span class="text-md font-semibold text-gray-800">6</span>
+                </label>
+                <label class="flex items-center justify-center p-2 bg-gray-100 border border-gray-200 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors duration-200">
+                    <input type="checkbox" class="hidden members-checkbox" value="7">
+                    <span class="text-md font-semibold text-gray-800">7</span>
+                </label>
+                <label class="flex items-center justify-center p-2 bg-gray-100 border border-gray-200 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors duration-200">
+                    <input type="checkbox" class="hidden members-checkbox" value="8">
+                    <span class="text-md font-semibold text-gray-800">8</span>
+                </label>
+            </div>
 
             <!-- Filter by Location -->
             <div>
                 <button id="location-filter-toggle"
-                        class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded focus:outline-none">
+                        class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded focus:outline-none transition-colors duration-200">
                     Filter by Location ▼
                 </button>
-                <div id="location-dropdown" class="hidden mt-2 bg-white border rounded shadow-lg max-h-40 overflow-y-auto p-2">
-                    <label class="flex items-center space-x-2 p-1 hover:bg-gray-100 rounded">
-                        <input type="checkbox" class="location-checkbox" value="New York">
-                        <span class="text-sm text-gray-700">New York</span>
+                <div id="location-dropdown"
+                     class="hidden mt-2 bg-white border border-gray-200 rounded shadow-lg max-h-40 overflow-y-auto p-2">
+                    <label class="flex items-center space-x-2 p-2 bg-gray-50 border border-gray-200 rounded cursor-pointer hover:bg-yellow-50 transition-colors duration-200">
+                        <input type="checkbox" class="location-checkbox accent-yellow-400" value="New York">
+                        <span class="text-sm text-gray-800">New York</span>
                     </label>
-                    <label class="flex items-center space-x-2 p-1 hover:bg-gray-100 rounded">
-                        <input type="checkbox" class="location-checkbox" value="London">
-                        <span class="text-sm text-gray-700">London</span>
+                    <label class="flex items-center space-x-2 p-2 bg-gray-50 border border-gray-200 rounded cursor-pointer hover:bg-yellow-50 transition-colors duration-200">
+                        <input type="checkbox" class="location-checkbox accent-yellow-400" value="London">
+                        <span class="text-sm text-gray-800">London</span>
                     </label>
-                    <label class="flex items-center space-x-2 p-1 hover:bg-gray-100 rounded">
-                        <input type="checkbox" class="location-checkbox" value="Paris">
-                        <span class="text-sm text-gray-700">Paris</span>
+                    <label class="flex items-center space-x-2 p-2 bg-gray-50 border border-gray-200 rounded cursor-pointer hover:bg-yellow-50 transition-colors duration-200">
+                        <input type="checkbox" class="location-checkbox accent-yellow-400" value="Paris">
+                        <span class="text-sm text-gray-800">Paris</span>
                     </label>
                 </div>
             </div>
@@ -130,7 +131,7 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         const filtersPanel = document.getElementById("filters-panel");
         const filtersOverlay = document.getElementById("filters-overlay");
         const closeFiltersBtn = document.getElementById("close-filters");
@@ -139,7 +140,7 @@
         filtersPanel.classList.remove("-translate-x-full");
         filtersOverlay.classList.remove("hidden");
 
-        closeFiltersBtn.addEventListener("click", function() {
+        closeFiltersBtn.addEventListener("click", function () {
             filtersPanel.classList.add("-translate-x-full");
             filtersOverlay.classList.add("hidden");
         });
@@ -147,7 +148,7 @@
         // Toggle for location dropdown
         const locationToggle = document.getElementById("location-filter-toggle");
         const locationDropdown = document.getElementById("location-dropdown");
-        locationToggle.addEventListener("click", function() {
+        locationToggle.addEventListener("click", function () {
             locationDropdown.classList.toggle("hidden");
         });
 
