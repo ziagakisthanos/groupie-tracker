@@ -1,25 +1,24 @@
 document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {
+        // --- Basic Filter Panel Setup ---
         const filtersPanel = document.getElementById("filters-panel");
         const toggleFiltersBtn = document.getElementById("toggle-filters");
         const closeFiltersBtn = document.getElementById("close-filters");
-        const applyFiltersBtn = document.getElementById("apply-filters");
-
-        if (!filtersPanel || !toggleFiltersBtn || !closeFiltersBtn || !applyFiltersBtn) {
+        // Remove applyFiltersBtn from our check since it's removed from HTML
+        if (!filtersPanel || !toggleFiltersBtn || !closeFiltersBtn) {
             console.error("❌ Filters elements not found in the DOM.");
             return;
         }
 
-        // ✅ Toggle Filters Panel
+        // Toggle Filters Panel
         toggleFiltersBtn.addEventListener("click", () => {
             filtersPanel.classList.toggle("-translate-x-full");
         });
-
         closeFiltersBtn.addEventListener("click", () => {
             filtersPanel.classList.add("-translate-x-full");
         });
 
-        // ✅ Get Filter Elements
+        // --- Range Input Elements for Creation and Album Dates ---
         const creationStart = document.getElementById("creation-start");
         const creationEnd = document.getElementById("creation-end");
         const creationStartValue = document.getElementById("creation-start-value");
@@ -30,139 +29,155 @@ document.addEventListener("DOMContentLoaded", () => {
         const albumStartValue = document.getElementById("album-start-value");
         const albumEndValue = document.getElementById("album-end-value");
 
-        const membersCheckboxes = document.querySelectorAll(".members-checkbox");
-        const locationFilterToggle = document.getElementById("location-filter-toggle");
-        const locationDropdown = document.getElementById("location-dropdown");
-        const locationCheckboxes = document.querySelectorAll(".location-checkbox");
-
-        if (!locationFilterToggle || !locationDropdown) {
-            console.error("❌ Location filter elements are missing.");
-            return;
-        }
-
-        // ✅ Toggle Location Dropdown
-        locationFilterToggle.addEventListener("click", () => {
-            locationDropdown.classList.toggle("hidden");
-        });
-
-        // ✅ Update Member Checkbox Selection with More Visible Color
-        membersCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener("change", () => {
-                if (checkbox.checked) {
-                    // When checked, set a more visible blue background
-                    checkbox.parentElement.classList.remove("bg-gray-100");
-                    checkbox.parentElement.classList.add("bg-yellow-300");
-                } else {
-                    // Restore the default background when unchecked
-                    checkbox.parentElement.classList.remove("bg-yellow-300");
-                    checkbox.parentElement.classList.add("bg-gray-100");
-                }
-            });
-        });
-
+        // --- Attach Validation on Range Inputs ---
         function validateRangeInput(startInput, endInput, startDisplay, endDisplay) {
             startInput.addEventListener("input", () => {
                 if (parseInt(startInput.value) > parseInt(endInput.value)) {
-                    startInput.value = endInput.value; // Prevent crossing
+                    startInput.value = endInput.value;
                 }
                 startDisplay.textContent = startInput.value;
-                startInput.classList.add("focus-glow"); // Add glow effect
+                startInput.classList.add("focus-glow");
             });
-
             endInput.addEventListener("input", () => {
                 if (parseInt(endInput.value) < parseInt(startInput.value)) {
-                    endInput.value = startInput.value; // Prevent crossing
+                    endInput.value = startInput.value;
                 }
                 endDisplay.textContent = endInput.value;
                 endInput.classList.add("focus-glow");
             });
         }
-
-        // ✅ Apply validation for both date ranges
         validateRangeInput(creationStart, creationEnd, creationStartValue, creationEndValue);
         validateRangeInput(albumStart, albumEnd, albumStartValue, albumEndValue);
 
-        // ✅ Apply Filters When Button is Clicked
-        applyFiltersBtn.addEventListener("click", () => {
-            updateFilters();
+        // --- Attach Change Listeners for Filter Controls ---
+        // (Do not include location-checkbox here since those are added dynamically)
+        const filterControls = [
+            creationStart,
+            creationEnd,
+            albumStart,
+            albumEnd,
+            ...document.querySelectorAll(".members-checkbox")
+        ];
+        filterControls.forEach(control => {
+            control.addEventListener("change", () => {
+                updateFilters();
+            });
         });
 
-        // ✅ Clear Filters Functionality
+        // --- Members Checkboxes Appearance ---
+        const membersCheckboxes = document.querySelectorAll(".members-checkbox");
+        membersCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", () => {
+                if (checkbox.checked) {
+                    checkbox.parentElement.classList.remove("bg-gray-100");
+                    checkbox.parentElement.classList.add("bg-yellow-300");
+                } else {
+                    checkbox.parentElement.classList.remove("bg-yellow-300");
+                    checkbox.parentElement.classList.add("bg-gray-100");
+                }
+            });
+        });
+
+        // --- Location Dropdown Setup ---
+        const locationFilterToggle = document.getElementById("location-filter-toggle");
+        const locationDropdown = document.getElementById("location-dropdown");
+        // locationCheckboxes will be populated dynamically
+        let locationCheckboxes = document.querySelectorAll(".location-checkbox");
+
+        if (!locationFilterToggle || !locationDropdown) {
+            console.error("❌ Location filter elements are missing.");
+            return;
+        }
+        locationFilterToggle.addEventListener("click", () => {
+            locationDropdown.classList.toggle("hidden");
+        });
+
+        // --- Clear Filters Functionality ---
         const clearFiltersBtn = document.getElementById("clear-filters");
         if (clearFiltersBtn) {
             clearFiltersBtn.addEventListener("click", () => {
                 console.log("Clear button clicked");
-                // Reset range inputs to default values
+                // Reset range inputs to defaults
                 creationStart.value = "1950";
                 creationEnd.value = "2025";
                 albumStart.value = "1950";
                 albumEnd.value = "2025";
-
-                // Update display spans for range inputs
                 creationStartValue.textContent = creationStart.value;
                 creationEndValue.textContent = creationEnd.value;
                 albumStartValue.textContent = albumStart.value;
                 albumEndValue.textContent = albumEnd.value;
 
-                // Uncheck all member checkboxes and restore default background
+                // Clear members checkboxes
                 membersCheckboxes.forEach(checkbox => {
                     checkbox.checked = false;
                     checkbox.parentElement.classList.remove("bg-yellow-300");
                     checkbox.parentElement.classList.add("bg-gray-100");
                 });
-                // Uncheck all location checkboxes and restore default background if applied
-                locationCheckboxes.forEach(checkbox => {
+                // Re-query and clear location checkboxes (dynamically added)
+                document.querySelectorAll(".location-checkbox").forEach(checkbox => {
                     checkbox.checked = false;
                     checkbox.parentElement.classList.remove("bg-yellow-300");
                     checkbox.parentElement.classList.add("bg-gray-100");
                 });
                 console.log("Filters cleared");
+
+                // Now call updateFilters() so that it detects no filters and renders page 1
+                updateFilters();
             });
         } else {
             console.error("Clear Filters button not found.");
         }
 
-        // ✅ Function to Filter Artists
+        // --- Filtering Function ---
         function updateFilters() {
-            const selectedCreationStart = parseInt(creationStart.value);
-            const selectedCreationEnd = parseInt(creationEnd.value);
+            if (!window.artistsData || window.artistsData.length === 0) {
+                console.warn("artistsData not loaded yet.");
+                return;
+            }
 
-            const selectedAlbumStart = parseInt(albumStart.value);
-            const selectedAlbumEnd = parseInt(albumEnd.value);
+            const selectedCreationStart = parseInt(creationStart.value) || 1950;
+            const selectedCreationEnd = parseInt(creationEnd.value) || 2025;
+            const selectedAlbumStart = parseInt(albumStart.value) || 1950;
+            const selectedAlbumEnd = parseInt(albumEnd.value) || 2025;
 
             const selectedMembers = [];
-            membersCheckboxes.forEach(checkbox => {
-                if (checkbox.checked) selectedMembers.push(parseInt(checkbox.value));
+            document.querySelectorAll(".members-checkbox").forEach(checkbox => {
+                if (checkbox.checked) {
+                    const val = parseInt(checkbox.value);
+                    if (!isNaN(val)) selectedMembers.push(val);
+                }
             });
-
             const selectedLocations = [];
-            locationCheckboxes.forEach(checkbox => {
+            document.querySelectorAll(".location-checkbox").forEach(checkbox => {
                 if (checkbox.checked) selectedLocations.push(checkbox.value.toLowerCase());
             });
 
-            // ✅ Show all artists if no filters are applied
+            console.log("Creation range:", selectedCreationStart, "-", selectedCreationEnd);
+            console.log("Album range:", selectedAlbumStart, "-", selectedAlbumEnd);
+            console.log("Selected members:", selectedMembers);
+            console.log("Selected locations:", selectedLocations);
+
+            // If no filters are applied, clear the filtered results
             if (
                 selectedCreationStart === 1950 && selectedCreationEnd === 2025 &&
                 selectedAlbumStart === 1950 && selectedAlbumEnd === 2025 &&
                 selectedMembers.length === 0 && selectedLocations.length === 0
             ) {
-                renderPage(artistsData); // Reset to show all artists
+                window.filteredArtists = null;
+                window.currentPage = 1;
+                window.renderPage(window.currentPage);
+                window.renderPagination(window.artistsData.length);
                 return;
             }
 
-            // ✅ Fetch artists data (assuming `artistsData` is available globally)
-            if (typeof artistsData === "undefined") {
-                console.error("❌ artistsData is not defined.");
-                return;
-            }
-
-            const filteredArtists = artistsData.filter(artist => {
+            const filteredArtists = window.artistsData.filter(artist => {
                 const creationYear = parseInt(artist.artist.creationDate);
-                const albumYear = parseInt(artist.artist.firstAlbum.split("-")[2]);
+                // Extract album year using a regex for robustness:
+                let albumYearMatch = artist.artist.firstAlbum.match(/\d{4}/);
+                let albumYear = albumYearMatch ? parseInt(albumYearMatch[0]) : 1950;
                 const membersCount = artist.artist.members.length;
                 const artistLocations = Object.keys(artist.relations).map(loc => loc.toLowerCase());
 
-                // ✅ Apply filters
                 return (
                     creationYear >= selectedCreationStart && creationYear <= selectedCreationEnd &&
                     albumYear >= selectedAlbumStart && albumYear <= selectedAlbumEnd &&
@@ -171,34 +186,45 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
             });
 
-            // ✅ Re-render Artists
-            renderPage(filteredArtists);
+            console.log("Filtered artists:", filteredArtists);
+            window.filteredArtists = filteredArtists;
+            window.currentPage = 1;
+            window.renderPage(window.currentPage);
+            window.renderPagination(filteredArtists.length);
         }
 
-        // ✅ Function to Re-Render Artists after Filtering
-        function renderPage(filteredArtists) {
-            const artistsContainer = document.getElementById("artists-container");
-            artistsContainer.innerHTML = "";
-
-            if (filteredArtists.length === 0) {
-                artistsContainer.innerHTML = "<p class='text-center text-gray-600 text-lg'>No artists match your filters.</p>";
+        // --- Dynamically Populate Location Filter ---
+        function populateLocationFilter() {
+            const locationDropdown = document.getElementById("location-dropdown");
+            if (!locationDropdown) return;
+            if (!window.artistsData || window.artistsData.length === 0) {
+                console.warn("No artists data available to populate locations.");
                 return;
             }
-
-            filteredArtists.forEach(artist => {
-                const card = document.createElement("div");
-                card.className = "artist-card bg-gray-200 rounded-lg shadow-2xl p-4";
-
-                card.innerHTML = `
-                    <div class="relative flex flex-col h-full bg-gray-200 shadow-2xl rounded-lg p-4 min-h-[350px]">
-                        <h2 class="text-xl font-bold text-gray-800">${artist.artist.name}</h2>
-                        <p class="text-sm text-gray-600"><strong>First Album:</strong> ${artist.artist.firstAlbum}</p>
-                        <p class="text-sm text-gray-600"><strong>Members:</strong> ${artist.artist.members.join(", ")}</p>
-                    </div>
-                `;
-                artistsContainer.appendChild(card);
+            const locationsSet = new Set();
+            window.artistsData.forEach(artist => {
+                if (artist.relations && typeof artist.relations === "object") {
+                    Object.keys(artist.relations).forEach(loc => locationsSet.add(loc));
+                }
             });
+            locationDropdown.innerHTML = "";
+            locationsSet.forEach(loc => {
+                const formattedLoc = loc.split("_").join(" ");
+                const label = document.createElement("label");
+                label.className =
+                    "flex items-center space-x-2 p-2 bg-gray-50 border border-gray-200 rounded cursor-pointer hover:bg-yellow-50 transition-colors duration-200";
+                label.innerHTML = `<input type="checkbox" class="location-checkbox accent-yellow-400" value="${loc}">
+                           <span class="text-sm text-gray-800">${formattedLoc}</span>`;
+                locationDropdown.appendChild(label);
+            });
+            // Update local reference for location checkboxes
+            locationCheckboxes = document.querySelectorAll(".location-checkbox");
+            console.log("Location filter populated with:", Array.from(locationsSet));
         }
 
+        // Listen for the custom event dispatched when artistsData is loaded
+        document.addEventListener("artistsDataLoaded", () => {
+            populateLocationFilter();
+        });
     }, 200);
 });

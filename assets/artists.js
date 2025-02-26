@@ -12,6 +12,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let artistsData = [];
     let currentArtist = null; // Stores the currently selected artist
 
+    //Global variable
+    window.artistsData = [];
+
     // Fetch artist data with retry logic
     const fetchArtistsWithRetry = async (url, retries = 5, delay = 1000) => {
         for (let i = 0; i < retries; i++) {
@@ -151,18 +154,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Render artists for the current page
     function renderPage(page) {
-        if (!Array.isArray(artistsData)) {
-            console.error("artistsData is not an array:", artistsData);
+        // Use filteredArtists if it exists; otherwise, use artistsData
+        const dataToRender = window.filteredArtists || artistsData;
+
+        if (!Array.isArray(dataToRender)) {
+            console.error("Data is not an array:", dataToRender);
             artistsContainer.innerHTML = "<p class='text-red-500'>Invalid artist data format.</p>";
             return;
         }
+
         const startIndex = (page - 1) * itemsPerPage;
         const endIndex = page * itemsPerPage;
-        const artistsToShow = artistsData.slice(startIndex, endIndex);
+        const artistsToShow = dataToRender.slice(startIndex, endIndex);
+
         if (artistsToShow.length === 0) {
             artistsContainer.innerHTML = "<p>No artists to display.</p>";
             return;
         }
+
         const fragment = document.createDocumentFragment();
         artistsContainer.innerHTML = "";
         artistsToShow.forEach((artist, index) => {
@@ -170,27 +179,24 @@ document.addEventListener("DOMContentLoaded", () => {
             card.className = `artist-card bg-gray-200 rounded-lg shadow-2xl overflow-hidden w-full sm:w-70 md:w-90 h-auto min-h-[22rem] flex flex-col justify-start transition-all duration-300 opacity-0 fall-animation fall-delay-${(index % 8) + 1}`;
             card.setAttribute("data-index", index);
             card.innerHTML = `
-        <div class="relative flex flex-col h-full bg-gray-200 shadow-2xl rounded-lg p-4 min-h-[350px]">
-          <!-- Image Container -->
-          <div class="flex justify-center items-center pt-2 pb-4">
-            <img class="w-36 h-36 sm:w-40 sm:h-40 rounded-full object-cover border-4 border-gray-200 transition-transform duration-300 ease-in-out transform hover:scale-110"
-                 src="${artist.artist.image}" alt="${artist.artist.name}">
-          </div>
-          <!-- Artist Name -->
-          <div class="flex-grow flex items-center justify-center">
-            <h2 class="text-xl sm:text-2xl font-bold text-gray-800 text-center mt-1">
-              ${artist.artist.name}
-            </h2>
-          </div>
-          <!-- Button -->
-          <div class="mt-auto flex flex-col justify-center pb-3">
-            <button type="button"
-                    class="view-details-btn text-white bg-gradient-to-r from-gray-600 via-gray-800 to-black hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-gray-500 font-medium rounded-lg text-sm px-4 py-2 text-center">
-              View Details
-            </button>
-          </div>
+      <div class="relative flex flex-col h-full bg-gray-200 shadow-2xl rounded-lg p-4 min-h-[350px]">
+        <div class="flex justify-center items-center pt-2 pb-4">
+          <img class="w-36 h-36 sm:w-40 sm:h-40 rounded-full object-cover border-4 border-gray-200 transition-transform duration-300 ease-in-out transform hover:scale-110"
+               src="${artist.artist.image}" alt="${artist.artist.name}">
         </div>
-      `;
+        <div class="flex-grow flex items-center justify-center">
+          <h2 class="text-xl sm:text-2xl font-bold text-gray-800 text-center mt-1">
+            ${artist.artist.name}
+          </h2>
+        </div>
+        <div class="mt-auto flex flex-col justify-center pb-3">
+          <button type="button"
+                  class="view-details-btn text-white bg-gradient-to-r from-gray-600 via-gray-800 to-black hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-gray-500 font-medium rounded-lg text-sm px-4 py-2 text-center">
+            View Details
+          </button>
+        </div>
+      </div>
+    `;
             fragment.appendChild(card);
             setTimeout(() => {
                 card.classList.remove("opacity-0");
@@ -202,23 +208,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Create pagination controls
     function renderPagination(totalItems) {
-        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        // Use filteredArtists if it exists
+        const dataLength = window.filteredArtists ? window.filteredArtists.length : artistsData.length;
+        const totalPages = Math.ceil(dataLength / itemsPerPage);
         paginationControls.innerHTML = "";
         for (let i = 1; i <= totalPages; i++) {
             const button = document.createElement("button");
             button.className = "pagination-btn px-4 py-2 mx-1 bg-gray-500 text-white rounded hover:bg-yellow-300";
             button.textContent = i;
             button.setAttribute("data-page", i);
-            if (i === currentPage) {
+            if (i === window.currentPage) {
                 button.classList.add("active");
             }
             button.addEventListener("click", () => {
-                if (currentPage !== i) {
-                    currentPage = i;
-                    renderPage(currentPage);
-                    renderPagination(artistsData.length);
-                    adjustPaginationPosition();
-                }
+                window.currentPage = i;
+                window.renderPage(window.currentPage);
+                window.renderPagination(dataLength);
+                adjustPaginationPosition();
             });
             paginationControls.appendChild(button);
         }
@@ -253,14 +259,18 @@ document.addEventListener("DOMContentLoaded", () => {
     // Fetch data and initialize UI
     fetchArtistsWithRetry(jsonURL)
         .then((data) => {
-            artistsData = data;
-            if (!Array.isArray(artistsData)) throw new Error("Fetched data is not an array");
+            window.artistsData = data;
+            artistsData = data; // local variable update as well
             renderPage(currentPage);
             renderPagination(artistsData.length);
             adjustPaginationPosition();
+            document.dispatchEvent(new Event("artistsDataLoaded"));
         })
         .catch((error) => {
             console.error("Error initializing artists:", error);
             artistsContainer.innerHTML = "<p class='text-red-500'>Failed to load artist data. Please try again later.</p>";
         });
+    window.renderPage = renderPage;
+    window.renderPagination = renderPagination;
+
 });

@@ -52,7 +52,7 @@
 <body class="bg-white text-gray-800">
 
 <!-- Header -->
-<header class="bg-gray-800 text-white">
+<header class="bg-[#292929] text-white">
     <div class="w-full flex justify-between items-center px-7 py-4">
         <!-- Logo and Site Name -->
         <a href="/" class="flex items-center text-2xl font-bold hover:text-yellow-200">
@@ -73,8 +73,13 @@
 <!-- Intro Section -->
 <section class="bg-white flex flex-col items-center text-center py-10">
     <!-- Main Heading -->
-    <h1 class="text-5xl font-extrabold text-yellow-400 fade-in" style="text-shadow: 3px 3px 6px rgba(73,73,73,0.62);">
-        Branding &amp; Design
+    <h1 class="text-5xl font-extrabold fade-in" style="
+  color: #f8cc4d;
+  text-shadow:
+    -1px -1px 0 black,
+    1px -1px 0 black,
+    -1px 1px 0 black,
+    1px 1px 0 black;">        Branding &amp; Design
     </h1>
     <!-- Subtitle -->
     <p class="text-xl text-gray-800 font-semibold mt-3">
@@ -88,37 +93,33 @@
 </section>
 
 <!-- Meet the Team Section -->
-<section class="container mx-auto px-6 py-12">
-    <div class="max-w-3xl mx-auto text-center mb-10">
-        <h2 class="text-4xl font-bold tracking-wider">Meet the Team</h2>
-        <p class="text-gray-700 text-lg mt-4">
-            We’re a team of two aspiring developers with a passion for music and technology. Working together on Groupie Tracker, we combine our skills in coding, design, and innovation to bring you an engaging platform to explore legendary artists.
-        </p>
+<section>
+    <div class="w-full bg-gray-100 py-6">
+        <div class="container mx-auto text-center">
+            <h2 class="text-4xl font-bold tracking-wider">Meet the Team</h2>
+            <p class="text-gray-700 text-lg mt-4">
+                We’re a team of two aspiring developers with a passion for music and technology. Working together on Groupie Tracker, we combine our skills in coding, design, and innovation to bring you an engaging platform to explore legendary artists.
+            </p>
+        </div>
     </div>
 
-    <!-- Grid for 2 members, centered in each column -->
+    <!-- Team Members Grid with white background -->
     <div class="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 justify-items-center py-10">
         <!-- Member Card 1 -->
         <div class="flex flex-col items-center text-center">
-            <!-- Image Wrapper with Hover Effects -->
             <div class="transition-transform duration-300 ease-in-out hover:scale-110 hover:-translate-y-2">
-                <img src="/assets/woman.png"
-                     alt="Woman"
-                     class="rounded-full w-32 h-32 object-cover border-4 border-[#FACC13]">
+                <img src="/assets/woman.png" alt="Woman" class="rounded-full w-32 h-32 object-cover border-4 border-[#FACC13]">
             </div>
             <h3 class="text-xl font-semibold mt-4">Maria</h3>
             <p class="text-sm text-gray-600">
-               " I am an aspiring developer with a keen eye for design and a deep love for music. I lead the design efforts and work on coding the user interface for Groupie Tracker, ensuring an engaging experience for our users."
+                "I am an aspiring developer with a keen eye for design and a deep love for music. I lead the design efforts and work on coding the user interface for Groupie Tracker, ensuring an engaging experience for our users."
             </p>
         </div>
 
         <!-- Member Card 2 -->
         <div class="flex flex-col items-center text-center">
-            <!-- Image Wrapper with Hover Effects -->
             <div class="transition-transform duration-300 ease-in-out hover:scale-110 hover:-translate-y-2">
-                <img src="/assets/man.png"
-                     alt="Man"
-                     class="rounded-full w-32 h-32 object-cover border-4 border-[#FACC13]">
+                <img src="/assets/man.png" alt="Man" class="rounded-full w-32 h-32 object-cover border-4 border-[#FACC13]">
             </div>
             <h3 class="text-xl font-semibold mt-4">Thanos</h3>
             <p class="text-sm text-gray-600">
@@ -138,7 +139,7 @@
                     DISCOVER
                 </div>
                 <!-- Back Side -->
-                <div class="flip-card-back bg-gray-800 border-4 border-gray-800 flex items-center justify-center text-[#FACC13] text-xl font-bold text-center">
+                <div class="flip-card-back bg-[#292929] border-4 border-gray-800 flex items-center justify-center text-[#FACC13] text-xl font-bold text-center">
                     We Discover New Talent
                 </div>
             </div>
@@ -149,7 +150,7 @@
                 <div class="flip-card-front bg-[#FACC13] flex items-center justify-center text-gray-800 text-xl font-bold text-center">
                     RESEARCH
                 </div>
-                <div class="flip-card-back bg-gray-800 border-4 border-gray-800 flex items-center justify-center text-[#FACC13] text-xl font-bold text-center">
+                <div class="flip-card-back bg-[#292929] border-4 border-gray-800 flex items-center justify-center text-[#FACC13] text-xl font-bold text-center">
                     We Research Deeply
                 </div>
             </div>
@@ -160,7 +161,7 @@
                 <div class="flip-card-front bg-[#FACC13] flex items-center justify-center text-gray-800 text-xl font-bold text-center">
                     DELIVER
                 </div>
-                <div class="flip-card-back bg-gray-800 border-4 border-gray-800 flex items-center justify-center text-[#FACC13] text-xl font-bold text-center">
+                <div class="flip-card-back bg-[#292929] border-4 border-gray-800 flex items-center justify-center text-[#FACC13] text-xl font-bold text-center">
                     We Deliver Excellence
                 </div>
             </div>
