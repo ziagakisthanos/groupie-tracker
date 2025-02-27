@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Get DOM elements for artists, pagination, modal, etc.
     const artistsContainer = document.getElementById("artists-container");
     const paginationControls = document.getElementById("pagination-controls");
     const modal = document.getElementById("artist-modal");
@@ -10,12 +11,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentPage = 1;
     const itemsPerPage = 8;
     let artistsData = [];
-    let currentArtist = null; // Stores the currently selected artist
+    let currentArtist = null;
 
-    //Global variable
+    // Expose artistsData globally for use by filters.js
     window.artistsData = [];
 
-    // Fetch artist data with retry logic
+    // Fetch data with retry logic
     const fetchArtistsWithRetry = async (url, retries = 5, delay = 1000) => {
         for (let i = 0; i < retries; i++) {
             try {
@@ -35,35 +36,39 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // Function to fill the dropdown for the chosen category
+    // Update dropdown content based on category
     function updateDropdownContent(dropdown, category, artistData) {
         let content = "";
-        if (category === "firstAlbum") {
-            content = `<p><strong>First Album:</strong> ${artistData.artist.firstAlbum}</p>`;
-        } else if (category === "members") {
-            content = `<p><strong>Members:</strong> ${artistData.artist.members.join(", ")}</p>`;
-        } else if (category === "concertDates") {
-            content = generateConcertList(artistData.relations);
-        } else if (category === "creationDate") {
-            content = `<p><strong>Creation Date:</strong> ${artistData.artist.creationDate || "Unknown"}</p>`;
+        switch (category) {
+            case "firstAlbum":
+                content = `<p><strong>First Album:</strong> ${artistData.artist.firstAlbum}</p>`;
+                break;
+            case "members":
+                content = `<p><strong>Members:</strong> ${artistData.artist.members.join(", ")}</p>`;
+                break;
+            case "concertDates":
+                content = generateConcertList(artistData.relations);
+                break;
+            case "creationDate":
+                content = `<p><strong>Creation Date:</strong> ${artistData.artist.creationDate || "Unknown"}</p>`;
+                break;
+            default:
+                content = "<p>No data available.</p>";
         }
         dropdown.innerHTML = content;
     }
 
-    // Listen for clicks on category items (dropdown behavior)
+    // Listen for clicks on category items in the modal dropdown
     if (categoryList) {
         categoryList.addEventListener("click", (event) => {
             const categoryItem = event.target.closest(".category-item");
             if (!categoryItem) return;
             const category = categoryItem.dataset.category;
             const dropdown = categoryItem.querySelector(".dropdown-content");
-
-            // Toggle: if already open, close it; otherwise, close all others then open this one
             if (!dropdown.classList.contains("hidden")) {
                 dropdown.classList.add("hidden");
                 dropdown.innerHTML = "";
             } else {
-                // Close any open dropdowns first
                 categoryList.querySelectorAll(".dropdown-content").forEach((el) => {
                     el.classList.add("hidden");
                     el.innerHTML = "";
@@ -76,42 +81,61 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Generate a list of concert dates
+    // Format a raw location string to "Proper Case, USA"
+    function formatLocation(rawLoc) {
+        let temp = rawLoc.replace(/_/g, " ");
+        let parts = temp.split("-");
+        parts = parts.map(part => {
+            const lower = part.toLowerCase();
+            if (lower === "usa") {
+                return "USA";
+            }
+            return part
+                .split(" ")
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(" ");
+        });
+        return parts.join(", ");
+    }
+
+    // Format a date string
+    function formatConcertDate(dateStr) {
+        const parts = dateStr.split("-");
+        if (parts.length !== 3) return dateStr;
+        const [year, month, day] = parts;
+        return `${day}.${month}.${year}`;
+    }
+
+    // Generate a formatted list of concert dates by location
     function generateConcertList(relations) {
         if (!relations || Object.keys(relations).length === 0) {
             return "<p class='text-gray-600'>No concert data available.</p>";
         }
         return `
-      <ul class="list-disc pl-5 space-y-2">
-        ${Object.entries(relations)
+            <ul class="list-disc pl-5 space-y-2">
+              ${Object.entries(relations)
             .map(([location, dates]) => {
-                const formattedLocation = location
-                    .split("_")
-                    .join(" ")
-                    .split("-")
-                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                    .join(" ");
-                return `<li><strong>${formattedLocation}:</strong> ${dates
-                    .map(date => date.replace(/-/g, "."))
-                    .join(", ")}</li>`;
+                const formattedLocation = formatLocation(location);
+                const formattedDates = dates
+                    .map(date => formatConcertDate(date))
+                    .join(", ");
+                return `<li><strong>${formattedLocation}:</strong> ${formattedDates}</li>`;
             })
             .join("")}
-      </ul>`;
+            </ul>
+        `;
     }
 
-    // Open the modal with the given artist data
+    // Open the artist modal with details
     function openArtistModal(artistData) {
         currentArtist = artistData;
-        // Update modal header to show artist name (without creation date here)
         modalHeader.textContent = `${artistData.artist.name} Details`;
-        // Reset all dropdowns
         if (categoryList) {
             categoryList.querySelectorAll(".dropdown-content").forEach((el) => {
                 el.classList.add("hidden");
                 el.innerHTML = "";
             });
         }
-        // Show the modal with fade/scale transition
         modal.classList.remove("hidden");
         setTimeout(() => {
             modal.classList.remove("opacity-0", "scale-95");
@@ -119,7 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 10);
     }
 
-    // Close the modal
+    // Close the modal with a fade-out effect
     function closeModal() {
         modal.classList.remove("opacity-100", "scale-100");
         modal.classList.add("opacity-0", "scale-95");
@@ -128,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 200);
     }
 
-    // Close button and overlay click to close modal
+    // Modal close event listeners
     modalClose.addEventListener("click", closeModal);
     modal.addEventListener("click", (e) => {
         if (e.target === modal) {
@@ -136,12 +160,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Hook up "View Details" button for each artist card
+    // Listen for "View Details" button clicks on artist cards
     artistsContainer.addEventListener("click", (event) => {
         const target = event.target;
         if (target.classList.contains("view-details-btn") || target.closest(".view-details-btn")) {
             const card = target.closest(".artist-card");
-            // Determine the correct artist index based on pagination
             const startIndex = (currentPage - 1) * itemsPerPage;
             const indexInPage = Array.from(artistsContainer.children).indexOf(card);
             const artistIndex = startIndex + indexInPage;
@@ -152,26 +175,21 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Render artists for the current page
+    // Render a specific page of artists or data
     function renderPage(page) {
-        // Use filteredArtists if it exists; otherwise, use artistsData
         const dataToRender = window.filteredArtists || artistsData;
-
         if (!Array.isArray(dataToRender)) {
             console.error("Data is not an array:", dataToRender);
             artistsContainer.innerHTML = "<p class='text-red-500'>Invalid artist data format.</p>";
             return;
         }
-
         const startIndex = (page - 1) * itemsPerPage;
         const endIndex = page * itemsPerPage;
         const artistsToShow = dataToRender.slice(startIndex, endIndex);
-
         if (artistsToShow.length === 0) {
             artistsContainer.innerHTML = "<p>No artists to display.</p>";
             return;
         }
-
         const fragment = document.createDocumentFragment();
         artistsContainer.innerHTML = "";
         artistsToShow.forEach((artist, index) => {
@@ -179,24 +197,24 @@ document.addEventListener("DOMContentLoaded", () => {
             card.className = `artist-card bg-gray-200 rounded-lg shadow-2xl overflow-hidden w-full sm:w-70 md:w-90 h-auto min-h-[22rem] flex flex-col justify-start transition-all duration-300 opacity-0 fall-animation fall-delay-${(index % 8) + 1}`;
             card.setAttribute("data-index", index);
             card.innerHTML = `
-      <div class="relative flex flex-col h-full bg-gray-200 shadow-2xl rounded-lg p-4 min-h-[350px]">
-        <div class="flex justify-center items-center pt-2 pb-4">
-          <img class="w-36 h-36 sm:w-40 sm:h-40 rounded-full object-cover border-4 border-gray-200 transition-transform duration-300 ease-in-out transform hover:scale-110"
-               src="${artist.artist.image}" alt="${artist.artist.name}">
-        </div>
-        <div class="flex-grow flex items-center justify-center">
-          <h2 class="text-xl sm:text-2xl font-bold text-gray-800 text-center mt-1">
-            ${artist.artist.name}
-          </h2>
-        </div>
-        <div class="mt-auto flex flex-col justify-center pb-3">
-          <button type="button"
-                  class="view-details-btn text-white bg-gradient-to-r from-gray-600 via-gray-800 to-black hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-gray-500 font-medium rounded-lg text-sm px-4 py-2 text-center">
-            View Details
-          </button>
-        </div>
-      </div>
-    `;
+                <div class="relative flex flex-col h-full bg-gray-200 shadow-2xl rounded-lg p-4 min-h-[350px]">
+                    <div class="flex justify-center items-center pt-2 pb-4">
+                        <img class="w-36 h-36 sm:w-40 sm:h-40 rounded-full object-cover border-4 border-gray-200 transition-transform duration-300 ease-in-out transform hover:scale-110"
+                             src="${artist.artist.image}" alt="${artist.artist.name}">
+                    </div>
+                    <div class="flex-grow flex items-center justify-center">
+                        <h2 class="text-xl sm:text-2xl font-bold text-gray-800 text-center mt-1">
+                            ${artist.artist.name}
+                        </h2>
+                    </div>
+                    <div class="mt-auto flex flex-col justify-center pb-3">
+                        <button type="button"
+                                class="view-details-btn text-white bg-gradient-to-r from-gray-600 via-gray-800 to-black hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-gray-500 font-medium rounded-lg text-sm px-4 py-2 text-center">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+            `;
             fragment.appendChild(card);
             setTimeout(() => {
                 card.classList.remove("opacity-0");
@@ -206,9 +224,8 @@ document.addEventListener("DOMContentLoaded", () => {
         adjustPaginationPosition();
     }
 
-    // Create pagination controls
+    // Render pagination buttons based on total items
     function renderPagination(totalItems) {
-        // Use filteredArtists if it exists
         const dataLength = window.filteredArtists ? window.filteredArtists.length : artistsData.length;
         const totalPages = Math.ceil(dataLength / itemsPerPage);
         paginationControls.innerHTML = "";
@@ -230,7 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Adjust pagination position
+    // Adjust the pagination container's position
     function adjustPaginationPosition() {
         const artistsHeight = artistsContainer.scrollHeight;
         const viewportHeight = window.innerHeight;
@@ -245,7 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Handle clicks on pagination container
+    // Pagination container click handling
     paginationControls.addEventListener("click", (event) => {
         const page = parseInt(event.target.getAttribute("data-page"), 10);
         if (page && page !== currentPage) {
@@ -256,11 +273,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Fetch data and initialize UI
+    // Fetch artist data and initialize UI
     fetchArtistsWithRetry(jsonURL)
         .then((data) => {
             window.artistsData = data;
-            artistsData = data; // local variable update as well
+            artistsData = data;
             renderPage(currentPage);
             renderPagination(artistsData.length);
             adjustPaginationPosition();
@@ -270,7 +287,8 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Error initializing artists:", error);
             artistsContainer.innerHTML = "<p class='text-red-500'>Failed to load artist data. Please try again later.</p>";
         });
+
+    // Expose render functions globally for use by filters
     window.renderPage = renderPage;
     window.renderPagination = renderPagination;
-
 });

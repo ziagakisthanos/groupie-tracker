@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {
-        // --- Basic Filter Panel Setup ---
+        // Basic Filter Panel
         const filtersPanel = document.getElementById("filters-panel");
         const toggleFiltersBtn = document.getElementById("toggle-filters");
         const closeFiltersBtn = document.getElementById("close-filters");
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
             filtersPanel.classList.add("-translate-x-full");
         });
 
-        // --- Range Input Elements for Creation and Album Dates ---
+        // Range Input Elements for Creation and Album Dates
         const creationStart = document.getElementById("creation-start");
         const creationEnd = document.getElementById("creation-end");
         const creationStartValue = document.getElementById("creation-start-value");
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const albumStartValue = document.getElementById("album-start-value");
         const albumEndValue = document.getElementById("album-end-value");
 
-        // --- Attach Validation on Range Inputs ---
+        // Attach Validation on Range Inputs
         function validateRangeInput(startInput, endInput, startDisplay, endDisplay) {
             startInput.addEventListener("input", () => {
                 if (parseInt(startInput.value) > parseInt(endInput.value)) {
@@ -46,11 +46,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 endInput.classList.add("focus-glow");
             });
         }
+
         validateRangeInput(creationStart, creationEnd, creationStartValue, creationEndValue);
         validateRangeInput(albumStart, albumEnd, albumStartValue, albumEndValue);
 
-        // --- Attach Change Listeners for Filter Controls ---
-        // (Do not include location-checkbox here since those are added dynamically)
+        // Attach Change Listeners for Filter Controls
         const filterControls = [
             creationStart,
             creationEnd,
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
-        // --- Members Checkboxes Appearance ---
+        // Members Checkboxes Appearance
         const membersCheckboxes = document.querySelectorAll(".members-checkbox");
         membersCheckboxes.forEach(checkbox => {
             checkbox.addEventListener("change", () => {
@@ -78,11 +78,12 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
-        // --- Location Dropdown Setup ---
+        // Location Dropdown Setup
         const locationFilterToggle = document.getElementById("location-filter-toggle");
         const locationDropdown = document.getElementById("location-dropdown");
-        // locationCheckboxes will be populated dynamically
-        let locationCheckboxes = document.querySelectorAll(".location-checkbox");
+
+        // Populated dynamically
+       // let locationCheckboxes = document.querySelectorAll(".location-checkbox");
 
         if (!locationFilterToggle || !locationDropdown) {
             console.error("❌ Location filter elements are missing.");
@@ -92,7 +93,14 @@ document.addEventListener("DOMContentLoaded", () => {
             locationDropdown.classList.toggle("hidden");
         });
 
-        // --- Clear Filters Functionality ---
+        // Listen for changes on any location-checkbox within the dropdown
+        locationDropdown.addEventListener("change", (e) => {
+            if (e.target && e.target.classList.contains("location-checkbox")) {
+                updateFilters();
+            }
+        });
+
+        // Clear Filters Functionality
         const clearFiltersBtn = document.getElementById("clear-filters");
         if (clearFiltersBtn) {
             clearFiltersBtn.addEventListener("click", () => {
@@ -113,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     checkbox.parentElement.classList.remove("bg-yellow-300");
                     checkbox.parentElement.classList.add("bg-gray-100");
                 });
-                // Re-query and clear location checkboxes (dynamically added)
+                // Re-query and clear location checkboxes
                 document.querySelectorAll(".location-checkbox").forEach(checkbox => {
                     checkbox.checked = false;
                     checkbox.parentElement.classList.remove("bg-yellow-300");
@@ -121,14 +129,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
                 console.log("Filters cleared");
 
-                // Now call updateFilters() so that it detects no filters and renders page 1
+                // Call updateFilters() so that it detects no filters and renders page 1
                 updateFilters();
             });
         } else {
             console.error("Clear Filters button not found.");
         }
 
-        // --- Filtering Function ---
+        // Filtering Function
         function updateFilters() {
             if (!window.artistsData || window.artistsData.length === 0) {
                 console.warn("artistsData not loaded yet.");
@@ -149,7 +157,9 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             const selectedLocations = [];
             document.querySelectorAll(".location-checkbox").forEach(checkbox => {
-                if (checkbox.checked) selectedLocations.push(checkbox.value.toLowerCase());
+                if (checkbox.checked) {
+                    selectedLocations.push(checkbox.value.toLowerCase());
+                }
             });
 
             console.log("Creation range:", selectedCreationStart, "-", selectedCreationEnd);
@@ -172,11 +182,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const filteredArtists = window.artistsData.filter(artist => {
                 const creationYear = parseInt(artist.artist.creationDate);
+
                 // Extract album year using a regex for robustness:
                 let albumYearMatch = artist.artist.firstAlbum.match(/\d{4}/);
                 let albumYear = albumYearMatch ? parseInt(albumYearMatch[0]) : 1950;
+
                 const membersCount = artist.artist.members.length;
-                const artistLocations = Object.keys(artist.relations).map(loc => loc.toLowerCase());
+                const artistLocations = artist.locations.map(loc => loc.toLowerCase());
 
                 return (
                     creationYear >= selectedCreationStart && creationYear <= selectedCreationEnd &&
@@ -186,6 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
             });
 
+
             console.log("Filtered artists:", filteredArtists);
             window.filteredArtists = filteredArtists;
             window.currentPage = 1;
@@ -193,38 +206,86 @@ document.addEventListener("DOMContentLoaded", () => {
             window.renderPagination(filteredArtists.length);
         }
 
-        // --- Dynamically Populate Location Filter ---
+        // Dynamically Populate Location Filter
         function populateLocationFilter() {
+            console.log("populateLocationFilter() called");
             const locationDropdown = document.getElementById("location-dropdown");
             if (!locationDropdown) return;
+
             if (!window.artistsData || window.artistsData.length === 0) {
                 console.warn("No artists data available to populate locations.");
                 return;
             }
+
+            // Collect raw location strings in a Set to avoid duplicates
             const locationsSet = new Set();
             window.artistsData.forEach(artist => {
                 if (artist.relations && typeof artist.relations === "object") {
                     Object.keys(artist.relations).forEach(loc => locationsSet.add(loc));
                 }
             });
+
+            console.log("Collected locations (raw):", Array.from(locationsSet));
+
+            // Convert the set to an array so we can sort it
+            let locationsArray = Array.from(locationsSet);
+
+            // Sort alphabetically (case-insensitive)
+            locationsArray.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+
+            // Clear any existing content in the dropdown
             locationDropdown.innerHTML = "";
-            locationsSet.forEach(loc => {
-                const formattedLoc = loc.split("_").join(" ");
+
+            // Create a checkbox for each unique, sorted location
+            locationsArray.forEach(rawLoc => {
+                const formattedLoc = formatLocation(rawLoc);
                 const label = document.createElement("label");
                 label.className =
                     "flex items-center space-x-2 p-2 bg-gray-50 border border-gray-200 rounded cursor-pointer hover:bg-yellow-50 transition-colors duration-200";
-                label.innerHTML = `<input type="checkbox" class="location-checkbox accent-yellow-400" value="${loc}">
-                           <span class="text-sm text-gray-800">${formattedLoc}</span>`;
+                label.innerHTML = `
+      <input type="checkbox" class="location-checkbox accent-yellow-400" value="${rawLoc}">
+      <span class="text-sm text-gray-800">${formattedLoc}</span>
+    `;
                 locationDropdown.appendChild(label);
             });
-            // Update local reference for location checkboxes
-            locationCheckboxes = document.querySelectorAll(".location-checkbox");
-            console.log("Location filter populated with:", Array.from(locationsSet));
+
+            console.log("Location filter populated (sorted & formatted):", locationsArray);
+        }
+
+        function formatLocation(rawLoc) {
+            // Replace underscores with spaces
+            let temp = rawLoc.replace(/_/g, " ");
+
+            // Split on dashes
+            let parts = temp.split("-");
+
+            // Capitalize each part, special-case "usa"
+            parts = parts.map(part => {
+                let lower = part.toLowerCase();
+                if (lower === "usa") {
+                    return "USA";
+                }
+                // Otherwise, capitalize first letter of each word
+                return part
+                    .split(" ")
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                    .join(" ");
+            });
+
+            return parts.join(", ");
         }
 
         // Listen for the custom event dispatched when artistsData is loaded
         document.addEventListener("artistsDataLoaded", () => {
+            console.log("artistsDataLoaded event fired");
             populateLocationFilter();
         });
+
+        // Fallback: if window.artistsData is already loaded, call it immediately.
+        if (window.artistsData && window.artistsData.length > 0) {
+            console.log("Artists data already loaded; calling populateLocationFilter()");
+            populateLocationFilter();
+        }
+
     }, 200);
 });
