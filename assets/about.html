@@ -70,25 +70,46 @@
 </header>
 
 <!-- Intro Section -->
-<section class="bg-white flex flex-col items-center text-center py-10">
+<section class="bg-white flex flex-col items-center text-center py-10 relative">
     <!-- Main Heading -->
-    <h1 class="text-5xl font-extrabold fade-in" style="
-  color: #f8cc4d;
-  text-shadow:
-    -1px -1px 0 black,
-    1px -1px 0 black,
-    -1px 1px 0 black,
-    1px 1px 0 black;">        Branding &amp; Design
+    <h1 class="text-5xl font-extrabold fade-in"
+        style="
+            color: #f8cc4d;
+            text-shadow:
+                -1px -1px 0 black,
+                1px -1px 0 black,
+                -1px 1px 0 black,
+                1px 1px 0 black;
+        "
+    >
+        Branding &amp; Design
     </h1>
+
     <!-- Subtitle -->
     <p class="text-xl text-gray-800 font-semibold mt-3">
         Where Legendary Artists Come to Life
     </p>
+
+    <!-- Left shape -->
+    <img
+            src="/assets/shapes.png"
+            alt="Shapes Left"
+            class="absolute w-32 h-70 top-16 left-24"
+    />
+
+    <!-- Right shape -->
+    <img
+            src="/assets/shapes.png"
+            alt="Shapes Right"
+            class="absolute w-32 h-70 bottom-16 right-24"
+    />
+
     <!-- Large Team Image -->
     <img
             src="/assets/team.png"
             alt="Team"
-            class="h-96 w-auto mt-6">
+            class="h-96 w-auto mt-6 relative z-10"
+    />
 </section>
 
 <!-- Meet the Team Section -->
