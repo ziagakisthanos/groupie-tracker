@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 content = generateConcertList(artistData.relations);
                 break;
             case "creationDate":
-                content = `<p><strong>Creation Date:</strong> ${artistData.artist.creationDate || "Unknown"}</p>`;
+                content = `<p><strong>Creation Date:</strong> ${artistData.artist.creationDate ? artistData.artist.creationDate.toString() : "Unknown"}</p>`;
                 break;
             default:
                 content = "<p>No data available.</p>";
@@ -160,15 +160,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Listen for "View Details" button clicks on artist cards
+// Listen for "View Details" button clicks on artist cards
     artistsContainer.addEventListener("click", (event) => {
         const target = event.target;
         if (target.classList.contains("view-details-btn") || target.closest(".view-details-btn")) {
             const card = target.closest(".artist-card");
+            // Determine the correct artist index based on pagination
             const startIndex = (currentPage - 1) * itemsPerPage;
             const indexInPage = Array.from(artistsContainer.children).indexOf(card);
             const artistIndex = startIndex + indexInPage;
-            const artistData = artistsData[artistIndex];
+            // Use filtered data if available, otherwise the full list.
+            const dataSource = window.filteredArtists || artistsData;
+            const artistData = dataSource[artistIndex];
             if (artistData) {
                 openArtistModal(artistData);
             }
@@ -197,24 +200,25 @@ document.addEventListener("DOMContentLoaded", () => {
             card.className = `artist-card bg-gray-200 rounded-lg shadow-2xl overflow-hidden w-full sm:w-70 md:w-90 h-auto min-h-[22rem] flex flex-col justify-start transition-all duration-300 opacity-0 fall-animation fall-delay-${(index % 8) + 1}`;
             card.setAttribute("data-index", index);
             card.innerHTML = `
-                <div class="relative flex flex-col h-full bg-gray-200 shadow-2xl rounded-lg p-4 min-h-[350px]">
-                    <div class="flex justify-center items-center pt-2 pb-4">
-                        <img class="w-36 h-36 sm:w-40 sm:h-40 rounded-full object-cover border-4 border-gray-200 transition-transform duration-300 ease-in-out transform hover:scale-110"
-                             src="${artist.artist.image}" alt="${artist.artist.name}">
-                    </div>
-                    <div class="flex-grow flex items-center justify-center">
-                        <h2 class="text-xl sm:text-2xl font-bold text-gray-800 text-center mt-1">
-                            ${artist.artist.name}
-                        </h2>
-                    </div>
-                    <div class="mt-auto flex flex-col justify-center pb-3">
-                        <button type="button"
-                                class="view-details-btn text-white bg-gradient-to-r from-gray-600 via-gray-800 to-black hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-gray-500 font-medium rounded-lg text-sm px-4 py-2 text-center">
-                            View Details
-                        </button>
-                    </div>
-                </div>
-            `;
+  <div class="relative flex flex-col h-full bg-gray-200 shadow-2xl rounded-lg p-4 min-h-[350px]">
+    <div class="flex justify-center items-center pt-2 pb-4">
+      <img class="w-36 h-36 sm:w-40 sm:h-40 rounded-full object-cover border-4 border-gray-200 transition-transform duration-300 ease-in-out transform hover:scale-110"
+           src="${artist.artist.image}" alt="${artist.artist.name}">
+    </div>
+    <div class="flex-grow flex items-center justify-center">
+      <h2 class="text-xl sm:text-2xl font-bold text-gray-800 text-center mt-1">
+        ${artist.artist.name}
+      </h2>
+    </div>
+    <!-- Display the creation date -->
+    <div class="mt-auto flex flex-col justify-center pb-3">
+      <button type="button"
+              class="view-details-btn text-white bg-gradient-to-r from-gray-600 via-gray-800 to-black hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-gray-500 font-medium rounded-lg text-sm px-4 py-2 text-center">
+        View Details
+      </button>
+    </div>
+  </div>
+`;
             fragment.appendChild(card);
             setTimeout(() => {
                 card.classList.remove("opacity-0");
