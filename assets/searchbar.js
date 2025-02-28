@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Grab searchbar elements.
     const searchContainer = document.getElementById("search-container");
     const searchForm = document.getElementById("search-form");
     const searchInput = document.getElementById("search-input");
@@ -35,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return str.replace(/[^a-z0-9]/gi, "").toLowerCase();
     }
 
-    // Format the locations.
+    // Format a raw location string (e.g., "saitama-japan") into "Saitama, Japan".
     function formatLocation(rawLoc) {
         let temp = rawLoc.replace(/_/g, " ");
         let parts = temp.split("-");
@@ -69,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Perform live suggestions using substring matching on normalized values.
-    // If the query is only one character, use startsWith for artist names, members, and locations.
+    // For a single-character query, only return suggestions that start with that character.
     function performSearchSuggestions(query) {
         if (!window.artistsData) return [];
         const normalizedQuery = normalizeString(query);
@@ -83,13 +84,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (normalizedArtistName.startsWith(normalizedQuery)) {
                     const key = normalizedArtistName;
                     if (!suggestionsMap.has(key)) {
-                        suggestionsMap.set(key, {text: artistName, type: "artist"});
+                        suggestionsMap.set(key, { text: artistName, type: "artist" });
                     }
                 }
             } else if (normalizedArtistName.includes(normalizedQuery)) {
                 const key = `${normalizedArtistName}|artist`;
                 if (!suggestionsMap.has(key)) {
-                    suggestionsMap.set(key, {text: artistName, type: "artist"});
+                    suggestionsMap.set(key, { text: artistName, type: "artist" });
                 }
             }
 
@@ -100,13 +101,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (normalizedMember.startsWith(normalizedQuery)) {
                         const key = `${normalizedMember}|member`;
                         if (!suggestionsMap.has(key)) {
-                            suggestionsMap.set(key, {text: member, type: "member"});
+                            suggestionsMap.set(key, { text: member, type: "member" });
                         }
                     }
                 } else if (normalizedMember.includes(normalizedQuery)) {
                     const key = `${normalizedMember}|member`;
                     if (!suggestionsMap.has(key)) {
-                        suggestionsMap.set(key, {text: member, type: "member"});
+                        suggestionsMap.set(key, { text: member, type: "member" });
                     }
                 }
             });
@@ -119,13 +120,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (normalizedLoc.startsWith(normalizedQuery)) {
                             const key = `${normalizedLoc}|location`;
                             if (!suggestionsMap.has(key)) {
-                                suggestionsMap.set(key, {text: loc, type: "location"});
+                                suggestionsMap.set(key, { text: loc, type: "location" });
                             }
                         }
                     } else if (normalizedLoc.includes(normalizedQuery)) {
                         const key = `${normalizedLoc}|location`;
                         if (!suggestionsMap.has(key)) {
-                            suggestionsMap.set(key, {text: loc, type: "location"});
+                            suggestionsMap.set(key, { text: loc, type: "location" });
                         }
                     }
                 });
@@ -135,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (artist.artist.firstAlbum && normalizeString(artist.artist.firstAlbum).includes(normalizedQuery)) {
                 const key = `${normalizeString(artist.artist.firstAlbum)}|first album`;
                 if (!suggestionsMap.has(key)) {
-                    suggestionsMap.set(key, {text: artist.artist.firstAlbum, type: "first album"});
+                    suggestionsMap.set(key, { text: artist.artist.firstAlbum, type: "first album" });
                 }
             }
 
@@ -143,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (artist.artist.creationDate && artist.artist.creationDate.toString().includes(query)) {
                 const key = `${artist.artist.creationDate.toString()}|creation date`;
                 if (!suggestionsMap.has(key)) {
-                    suggestionsMap.set(key, {text: artist.artist.creationDate.toString(), type: "creation date"});
+                    suggestionsMap.set(key, { text: artist.artist.creationDate.toString(), type: "creation date" });
                 }
             }
         });
@@ -169,21 +170,43 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 300);
     });
 
+    // Add an input event listener to reset the view if search input is cleared.
+    searchInput.addEventListener("input", () => {
+        if (searchInput.value.trim() === "") {
+            window.filteredArtists = null;
+            window.currentPage = 1;
+            window.renderPage(window.currentPage);
+            window.renderPagination(window.artistsData.length);
+        }
+    });
+
     // Handle search form submission: filter artists and update UI.
     searchForm.addEventListener("submit", (e) => {
         e.preventDefault();
         clearSuggestions();
         const rawQuery = searchInput.value.trim();
         const normalizedQuery = normalizeString(rawQuery);
-        if (!normalizedQuery) {
+
+        // If the search input is empty, reset filtering.
+        if (rawQuery === "") {
             window.filteredArtists = null;
             window.currentPage = 1;
             window.renderPage(window.currentPage);
             window.renderPagination(window.artistsData.length);
             return;
         }
+
+        // If the query has no alphanumeric characters, show no results.
+        if (normalizedQuery === "") {
+            window.filteredArtists = [];
+            window.currentPage = 1;
+            window.renderPage(window.currentPage);
+            window.renderPagination(0);
+            return;
+        }
+
         let results;
-        // If query is a single character, only check artist names using startsWith.
+        // If query is a single character, only filter artist names using startsWith.
         if (normalizedQuery.length === 1) {
             results = window.artistsData.filter(artist =>
                 normalizeString(artist.artist.name).startsWith(normalizedQuery)
