@@ -162,8 +162,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
             const suggestions = performSearchSuggestions(query);
+
+            // filter out duplicates
+            const uniqueSuggestions = suggestions.filter((sugg, index, self) =>
+            index === self.findIndex(s => s.text === sugg.text)
+        );
             clearSuggestions();
-            suggestions.forEach(sugg => {
+            uniqueSuggestions.forEach(sugg => {
                 const item = createSuggestionItem(sugg.text, sugg.type);
                 suggestionBox.appendChild(item);
             });

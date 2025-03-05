@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let artistsData = [];
     let currentArtist = null;
 
-    // Expose artistsData globally for use by filters.js
+    // Expose artistsData globally
     window.artistsData = [];
 
     // Fetch data with retry logic
