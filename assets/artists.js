@@ -141,6 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
             modal.classList.remove("opacity-0", "scale-95");
             modal.classList.add("opacity-100", "scale-100");
         }, 10);
+        loadGeolocationMap(artistData);
     }
 
     // Close the modal with a fade-out effect
