@@ -65,6 +65,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!categoryItem) return;
             const category = categoryItem.dataset.category;
             const dropdown = categoryItem.querySelector(".dropdown-content");
+            if (!dropdown) {
+                console.warn("No .dropdown-content found for category", category);
+                return;
+            }
             if (!dropdown.classList.contains("hidden")) {
                 dropdown.classList.add("hidden");
                 dropdown.innerHTML = "";
