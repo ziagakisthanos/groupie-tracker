@@ -8,6 +8,10 @@ Groupie Tracker is a web application built with **Go** that fetches and displays
 - **Concert Locations**: Shows venues for past and upcoming concerts.
 - **Concert Dates**: Lists event schedules.
 - **Data Relations**: Links artists with corresponding locations and dates.
+- **Searchbar**:
+    - Search by artist/band anme, members, locations, first alabum date and creation date.
+    - Case-insensitive search.
+    - Auto-suggestions while typing. 
 - **Client-Server Interaction**: Implements an interactive feature that requests and processes data from the server.
 
 ## API Data Structure
@@ -46,13 +50,7 @@ groupietracker/
 │   ├── fetch_all.go
 │   ├── fetch.go
 │   ├── models.go
-├── assets/
-│   ├── 404.html
-│   ├── 500.html
-│   ├── artists.html
-│   ├── artists.js
-│   ├── index.html
-│   ├── index.html
+├── assets/...
 ├── handlers/
 │   ├── api_handlers.go
 │   ├── errorhandlers.go
@@ -65,6 +63,7 @@ groupietracker/
 
 ## Usage
 - View a list of artists on the homepage.
+- Use the search bar to find artists, members, locations, or albums.
 - Click on an artist for detailed information.
 - Interact with elements that trigger server responses.
 
