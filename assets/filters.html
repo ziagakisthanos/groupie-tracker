@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Filters Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+<!-- Backdrop overlay for filters panel -->
+<div id="filters-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+
+<!-- Container for filters panel -->
+<div class="relative z-50 w-full flex justify-end px-6 mt-4">
+    <!-- Filters Panel -->
+    <div id="filters-panel" class="fixed top-20 left-0 w-72 bg-white shadow-2xl p-6 rounded-r-lg transition-transform transform -translate-x-full">
+        <!-- Panel header -->
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold text-gray-800">Filters</h2>
+            <button id="close-filters" class="text-gray-500 hover:text-gray-700 focus:outline-none">&times;</button>
+        </div>
+
+        <!-- Filters content -->
+        <div class="space-y-4">
+            <!-- Creation date filter -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Creation Date</label>
+                <div class="flex items-center space-x-2">
+                    <input type="range" id="creation-start" min="1950" max="2025" value="1950" class="w-full h-2 bg-yellow-400 rounded cursor-pointer">
+                    <span id="creation-start-value" class="text-sm text-gray-600">1950</span>
+                </div>
+                <div class="flex items-center space-x-2 mt-1">
+                    <input type="range" id="creation-end" min="1950" max="2025" value="2025" class="w-full h-2 bg-yellow-400 rounded cursor-pointer">
+                    <span id="creation-end-value" class="text-sm text-gray-600">2025</span>
+                </div>
+            </div>
+            <!-- First album date filter -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">First Album Date</label>
+                <div class="flex items-center space-x-2">
+                    <input type="range" id="album-start" min="1950" max="2025" value="1950" class="w-full h-2 bg-yellow-400 rounded cursor-pointer">
+                    <span id="album-start-value" class="text-sm text-gray-600">1950</span>
+                </div>
+                <div class="flex items-center space-x-2 mt-1">
+                    <input type="range" id="album-end" min="1950" max="2025" value="2025" class="w-full h-2 bg-yellow-400 rounded cursor-pointer">
+                    <span id="album-end-value" class="text-sm text-gray-600">2025</span>
+                </div>
+            </div>
+            <!-- Number of members filter -->
+            <label class="text-sm font-medium mt-4 block">Number of Members</label>
+            <div id="members-checkboxes" class="grid grid-cols-4 gap-2 mt-2">
+                <!-- Member count options -->
+                <label class="flex items-center justify-center p-2 bg-gray-100 border border-gray-200 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors duration-200">
+                    <input type="checkbox" class="hidden members-checkbox" value="1">
+                    <span class="text-md font-semibold text-gray-800">1</span>
+                </label>
+                <label class="flex items-center justify-center p-2 bg-gray-100 border border-gray-200 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors duration-200">
+                    <input type="checkbox" class="hidden members-checkbox" value="2">
+                    <span class="text-md font-semibold text-gray-800">2</span>
+                </label>
+                <label class="flex items-center justify-center p-2 bg-gray-100 border border-gray-200 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors duration-200">
+                    <input type="checkbox" class="hidden members-checkbox" value="3">
+                    <span class="text-md font-semibold text-gray-800">3</span>
+                </label>
+                <label class="flex items-center justify-center p-2 bg-gray-100 border border-gray-200 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors duration-200">
+                    <input type="checkbox" class="hidden members-checkbox" value="4">
+                    <span class="text-md font-semibold text-gray-800">4</span>
+                </label>
+                <label class="flex items-center justify-center p-2 bg-gray-100 border border-gray-200 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors duration-200">
+                    <input type="checkbox" class="hidden members-checkbox" value="5">
+                    <span class="text-md font-semibold text-gray-800">5</span>
+                </label>
+                <label class="flex items-center justify-center p-2 bg-gray-100 border border-gray-200 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors duration-200">
+                    <input type="checkbox" class="hidden members-checkbox" value="6">
+                    <span class="text-md font-semibold text-gray-800">6</span>
+                </label>
+                <label class="flex items-center justify-center p-2 bg-gray-100 border border-gray-200 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors duration-200">
+                    <input type="checkbox" class="hidden members-checkbox" value="7">
+                    <span class="text-md font-semibold text-gray-800">7</span>
+                </label>
+                <label class="flex items-center justify-center p-2 bg-gray-100 border border-gray-200 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors duration-200">
+                    <input type="checkbox" class="hidden members-checkbox" value="8">
+                    <span class="text-md font-semibold text-gray-800">8</span>
+                </label>
+            </div>
+            <!-- Filter by location -->
+            <div>
+                <button id="location-filter-toggle" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded focus:outline-none transition-colors duration-200">
+                    Filter by Location ▼
+                </button>
+                <!-- Dynamic location checkboxes will be inserted here -->
+                <div id="location-dropdown" class="hidden mt-2 bg-white border border-gray-200 rounded shadow-lg max-h-40 overflow-y-auto p-2"></div>
+            </div>
+            <!-- Clear filters button -->
+            <div class="flex justify-end items-center space-x-2 mt-4">
+                <button id="clear-filters" class="bg-gray-500 text-white py-1 px-3 rounded hover:bg-gray-600 focus:outline-none text-md">
+                    Clear
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters overlay and panel script -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const filtersPanel = document.getElementById("filters-panel");
+        const filtersOverlay = document.getElementById("filters-overlay");
+        const closeFiltersBtn = document.getElementById("close-filters");
+        // Open filters panel for demo
+        filtersPanel.classList.remove("-translate-x-full");
+        filtersOverlay.classList.remove("hidden");
+        closeFiltersBtn.addEventListener("click", function () {
+            filtersPanel.classList.add("-translate-x-full");
+            filtersOverlay.classList.add("hidden");
+        });
+        // Toggle location dropdown visibility
+        const locationToggle = document.getElementById("location-filter-toggle");
+        const locationDropdown = document.getElementById("location-dropdown");
+        locationToggle.addEventListener("click", function () {
+            locationDropdown.classList.toggle("hidden");
+        });
+    });
+</script>
+
+</body>
+</html>

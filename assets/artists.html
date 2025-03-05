@@ -1,45 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Artists</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Link to the external JavaScript file -->
-    <script src="/assets/artists.js" defer></script>
-    <link rel="stylesheet" href="/assets/styles.css">
+    <!-- Load artists.js first so that window.artistsData and render functions are available -->
+    <script src="/assets/artists.js"></script>
+    <script src="/assets/filters.js" defer></script>
+    <script src="/assets/searchbar.js" defer></script>
+    <link rel="stylesheet" href="/assets/styles.css"/>
 
 </head>
 <body class="bg-gray-200 min-h-screen flex flex-col">
+<!-- Header -->
+<header class="bg-[#292929] text-white">
+    <div class="w-full flex justify-between items-center px-7 py-4">
+        <a href="/" class="flex items-center text-2xl font-bold hover:text-yellow-200">
+            <img src="/assets/play.png" alt="Logo" class="h-8 w-auto mr-2"/>
+            Groupie Tracker
+        </a>
+        <nav>
+            <ul class="flex space-x-6">
+                <li><a href="/" class="hover:text-yellow-200">Home</a></li>
+                <li><a href="/assets/artists.html" class="hover:text-yellow-200">Artists</a></li>
+                <li><a href="/assets/about.html" class="hover:text-yellow-200">About Us</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
 
-<!-- Header Section -->
-<div class="relative z-10 flex flex-col justify-center items-center text-center pt-8">
+<!-- Container for the Search Bar -->
+<div id="search-bar-container" class="absolute top-[180px] right-6 w-auto z-50">
+    <form id="search-form" class="max-w-md w-full sm:w-96">
+        <div id="search-container"
+             class="relative flex items-center w-full bg-gray-100 border border-gray-300 rounded-lg shadow-md focus-within:ring-2 focus-within:ring-gray-500 focus-within:border-gray-500 transition-all">
+            <button id="search-icon" type="button"
+                    class="absolute inset-y-0 left-3 flex items-center cursor-pointer focus:outline-none">
+                <svg class="w-5 h-5 text-gray-500 hover:text-gray-700 transition" aria-hidden="true"
+                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 19l-4-4m0-7A7 7 0 1 1 1 8a7 7 0 1 1 14 0Z"/>
+                </svg>
+            </button>
+            <input type="search" id="search-input"
+                   class="w-full h-12 px-3 pl-10 text-sm text-gray-900 bg-gray-100 border-none rounded-lg focus:ring-0 outline-none"
+                   placeholder="Search artists, members, locations..." autocomplete="off" required>
+            <!-- Search Button  -->
+            <button type="submit" id="search-btn"
+                    class="px-5 h-10 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-lg text-sm transition-all cursor-pointer ml-2">
+                Search
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Filters toggle button -->
+<div id="filters-button-container" class="absolute top-[190px] left-6 z-50">
+    <button id="toggle-filters" class="bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-gray-700">
+        Filters
+    </button>
+</div>
+<!-- Container for Filters -->
+<div id="filters-container"></div>
+
+<!-- Header Section for Artists -->
+<div class="relative z-10 flex flex-col justify-center items-center text-center pt-6">
     <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-2 text-gray-800">Artists</h1>
-    <p class="text-base sm:text-lg md:text-xl text-gray-600 mb-4">Discover legendary artists and their music.</p>
+    <p class="text-base sm:text-lg md:text-xl text-gray-600 mb-4">
+        Discover legendary artists and their music.
+    </p>
 </div>
 
 <!-- Dynamic Artist Cards Container -->
-<div class="" style="min-height: 80vh !important;">
+<div style="min-height: 80vh !important;">
     <div id="artists-container"
          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6 items-start">
+        <!-- Artist cards will be rendered here -->
     </div>
-
     <!-- Pagination Container -->
     <div id="pagination-container" class="w-full flex justify-center mb-6">
         <div id="pagination-controls" class="flex flex-wrap justify-center gap-3 max-w-2xl mx-auto">
+            <!-- Pagination buttons will be rendered here -->
         </div>
     </div>
 </div>
 
-<!-- Large Modal -->
+<!-- Large Modal for Concert Dates -->
 <div id="large-modal" tabindex="-1"
      class="fixed inset-0 flex items-center justify-center z-50 hidden backdrop-blur-lg bg-gray-900 bg-opacity-50 transition-opacity">
     <div class="relative w-[50vw] max-w-[600px] h-[50vh] max-h-[600px] flex flex-col bg-white rounded-xl shadow-2xl transform scale-95 transition-transform">
-        <!-- Modal header -->
         <div class="flex items-center justify-between p-6 border-b border-gray-300">
-            <h3 class="text-3xl font-bold text-gray-900">
-                Concert Dates
-            </h3>
+            <h3 class="text-3xl font-bold text-gray-900">Concert Dates</h3>
             <button type="button"
                     class="text-gray-500 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center transition"
                     data-modal-hide="large-modal">
@@ -50,15 +102,95 @@
                 </svg>
             </button>
         </div>
-        <!-- Modal body -->
-        <div id="modal-body-content" class="p-6 space-y-4 text-gray-700 text-lg leading-relaxed
-                    flex-grow overflow-y-scroll max-h-[500px] pr-4">
-            <p class="text-gray-600">
-                Loading concert dates...
-            </p>
+        <div id="modal-body-content"
+             class="p-6 space-y-4 text-gray-700 text-lg leading-relaxed flex-grow overflow-y-scroll max-h-[500px] pr-4">
+            <p class="text-gray-600">Loading concert dates...</p>
         </div>
     </div>
 </div>
 
+<!-- Modal Container for Artist Details -->
+<div id="artist-modal"
+     class="fixed inset-0 hidden z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-lg opacity-0 scale-95 transition-all">
+    <div class="bg-white w-[90vw] max-w-2xl rounded-xl shadow-2xl p-6 relative">
+        <button id="modal-close" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-2xl font-bold">
+            &times;
+        </button>
+        <h2 id="modal-artist-name" class="text-2xl font-bold text-gray-900 mb-4">Artist Details</h2>
+        <ul id="category-list" class="space-y-3">
+            <li class="category-item" data-category="firstAlbum">
+                <div class="flex justify-between items-center cursor-pointer p-3 border rounded-md hover:bg-gray-100 transition">
+                    <span class="font-medium text-gray-800">First Album</span>
+                    <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 14 10"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                    </svg>
+                </div>
+                <div class="dropdown-content hidden mt-2 pl-4 border-l border-gray-300"></div>
+            </li>
+            <li class="category-item" data-category="members">
+                <div class="flex justify-between items-center cursor-pointer p-3 border rounded-md hover:bg-gray-100 transition">
+                    <span class="font-medium text-gray-800">Members</span>
+                    <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 14 10"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                    </svg>
+                </div>
+                <div class="dropdown-content hidden mt-2 pl-4 border-l border-gray-300"></div>
+            </li>
+            <li class="category-item" data-category="concertDates">
+                <div class="flex justify-between items-center cursor-pointer p-3 border rounded-md hover:bg-gray-100 transition">
+                    <span class="font-medium text-gray-800">Concert Dates</span>
+                    <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 14 10"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                    </svg>
+                </div>
+                <div class="dropdown-content hidden mt-2 pl-4 border-l border-gray-300"></div>
+            </li>
+            <li class="category-item" data-category="creationDate">
+                <div class="flex justify-between items-center cursor-pointer p-3 border rounded-md hover:bg-gray-100 transition">
+                    <span class="font-medium text-gray-800">Creation Date</span>
+                    <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 14 10"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                    </svg>
+                </div>
+                <div class="dropdown-content hidden mt-2 pl-4 border-l border-gray-300"></div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- Script to import filters.html -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        fetch("/assets/filters.html")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to load filters.html");
+                }
+                return response.text();
+            })
+            .then(html => {
+                document.getElementById("filters-container").innerHTML = html;
+            })
+            .catch(err => console.error("Error loading filters.html:", err));
+    });
+</script>
+
+<!-- Footer -->
+<footer class="bg-[#FACC13] text-black py-3 mt-8">
+    <div class="container mx-auto text-center">
+        <p>&copy; <span id="current-year"></span> Groupie Tracker. All rights reserved.</p>
+    </div>
+</footer>
+<script>
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+</script>
 </body>
 </html>
