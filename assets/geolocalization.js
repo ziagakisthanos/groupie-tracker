@@ -1,6 +1,3 @@
-// Global cache for coordinates.
-const coordinatesCache = new Map();
-
 // Load Leaflet Library
 const mapScript = document.createElement("script");
 mapScript.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
@@ -12,25 +9,21 @@ mapStyle.rel = "stylesheet";
 mapStyle.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
 document.head.appendChild(mapStyle);
 
-// Global variable to hold the map instance.
-let mapInstance = null;
+// Global variables to hold the map instance and markers
+window.myMap = null;
+window.mapMarkers = [];
 
-// Function to fetch geolocation data using OpenStreetMap's Nominatim API with caching.
+
+//Fetch geolocation data using OpenStreetMap's Nominatim API.
 async function getCoordinates(location) {
-    // If we have the coordinates cached, return them immediately.
-    if (coordinatesCache.has(location)) {
-        return coordinatesCache.get(location);
-    }
-
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`;
+    // Replace hyphens with commas for a better query format.
+    const processedLocation = location.split("-").join(", ");
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(processedLocation)}`;
     try {
         const response = await fetch(url);
         const data = await response.json();
         if (data && data.length > 0) {
-            const coords = { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
-            // Cache the result for future use.
-            coordinatesCache.set(location, coords);
-            return coords;
+            return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
         }
         return null;
     } catch (error) {
@@ -39,61 +32,65 @@ async function getCoordinates(location) {
     }
 }
 
-// Function to initialize and load the map with markers based on concert locations.
+// Initializes or updates the map with markers based on concert locations.
 async function loadGeolocationMap(artistData) {
     const mapContainer = document.getElementById("map-container");
     if (!mapContainer) {
         console.error("Map container not found.");
         return;
     }
-
-    // Remove previous map instance if it exists.
-    if (mapInstance) {
-        mapInstance.remove();
-        mapInstance = null;
+    // Clear any previous content.
+    if (!window.myMap) {
+        mapContainer.innerHTML = "";
     }
 
-    // Clear previous map content.
-    mapContainer.innerHTML = "";
-
-    // Wait for Leaflet to be available.
-    if (!window.L) {
-        mapScript.onload = async () => {
-            mapInstance = await initializeMap(artistData, mapContainer);
-        };
-    } else {
-        mapInstance = await initializeMap(artistData, mapContainer);
-    }
-}
-
-// Helper function to initialize the map once coordinates have been fetched.
-async function initializeMap(artistData, mapContainer) {
+// Get and sort location keys by the earliest date (assumes date strings parse correctly)
     const locations = Object.keys(artistData.relations);
-    // Use Promise.all to fetch coordinates concurrently.
-    const coordinates = await Promise.all(locations.map(getCoordinates));
+    const sortedLocations = locations.sort((a, b) => {
+        const dateA = new Date(artistData.relations[a][0]);
+        const dateB = new Date(artistData.relations[b][0]);
+        return dateA - dateB;
+    });
+
+    // Fetch coordinates for each sorted location.
+    const coordinates = await Promise.all(sortedLocations.map(getCoordinates));
     const validCoords = coordinates.filter(coord => coord !== null);
 
     if (validCoords.length === 0) {
         mapContainer.innerHTML = "<p class='text-red-500'>Map data unavailable.</p>";
-        return null;
+        return;
     }
 
-    // Set the view to the first valid coordinate.
+    // Use the first valid coordinate as the center.
     const center = [validCoords[0].lat, validCoords[0].lon];
-    const map = L.map(mapContainer).setView(center, 4);
 
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+    // If the map hasn't been created yet, initialize it.
+    if (!window.myMap) {
+        window.myMap = L.map(mapContainer).setView(center, 4);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(window.myMap);
+    } else {
+        // Update the map view.
+        window.myMap.setView(center, 4);
+        // Remove any existing markers.
+        window.mapMarkers.forEach(marker => window.myMap.removeLayer(marker));
+        window.mapMarkers = [];
+    }
 
-    // Add markers with popups.
+    // Add markers for each valid coordinate.
     validCoords.forEach((coord, index) => {
-        L.marker([coord.lat, coord.lon]).addTo(map)
+        const marker = L.marker([coord.lat, coord.lon]).addTo(window.myMap)
             .bindPopup(`<b>${locations[index]}</b>`);
+        window.mapMarkers.push(marker);
     });
 
-    return map;
+    // If there is more than one marker, draw a polyline connecting them in order.
+    if (validCoords.length > 1) {
+        const latLngs = validCoords.map(coord => [coord.lat, coord.lon]);
+        L.polyline(latLngs, { color: 'blue' }).addTo(window.myMap);
+    }
 }
 
-// Expose the loadGeolocationMap function for external use.
+// Expose loadGeolocationMap globally.
 window.loadGeolocationMap = loadGeolocationMap;
