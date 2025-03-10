@@ -9,10 +9,10 @@ mapStyle.rel = "stylesheet";
 mapStyle.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
 document.head.appendChild(mapStyle);
 
-// Global variables to hold the map instance and markers
+// Global variables to hold the map instance, markers and polyline
 window.myMap = null;
 window.mapMarkers = [];
-
+window.myPolyline = null;
 
 //Fetch geolocation data using OpenStreetMap's Nominatim API.
 async function getCoordinates(location) {
@@ -76,6 +76,11 @@ async function loadGeolocationMap(artistData) {
         // Remove any existing markers.
         window.mapMarkers.forEach(marker => window.myMap.removeLayer(marker));
         window.mapMarkers = [];
+        // remove the existing polylines, if any
+        if (window.myPolyline) {
+            window.myMap.removeLayer(window.myPolyline);
+            window.myPolyline = null;
+        }
     }
 
     // Add markers for each valid coordinate.
@@ -88,7 +93,7 @@ async function loadGeolocationMap(artistData) {
     // If there is more than one marker, draw a polyline connecting them in order.
     if (validCoords.length > 1) {
         const latLngs = validCoords.map(coord => [coord.lat, coord.lon]);
-        L.polyline(latLngs, { color: 'blue' }).addTo(window.myMap);
+        window.myPolyline = L.polyline(latLngs, { color: 'blue' }).addTo(window.myMap);
     }
 }
 

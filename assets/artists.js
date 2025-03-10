@@ -144,10 +144,10 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
             modal.classList.remove("opacity-0", "scale-95");
             modal.classList.add("opacity-100", "scale-100");
-            if (window.myMapInstance) {
-                window.myMapInstance.invalidateSize();
+            if (window.myMap) {
+                window.myMap.invalidateSize();
             }
-        }, 5);
+        }, 2);
         loadGeolocationMap(artistData);
     }
 
