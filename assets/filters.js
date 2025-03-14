@@ -83,8 +83,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const locationDropdown = document.getElementById("location-dropdown");
 
         // Populated dynamically
-       // let locationCheckboxes = document.querySelectorAll(".location-checkbox");
-
         if (!locationFilterToggle || !locationDropdown) {
             console.error("❌ Location filter elements are missing.");
             return;

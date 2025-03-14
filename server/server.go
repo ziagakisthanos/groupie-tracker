@@ -20,7 +20,7 @@ func Server(addr string, handler http.Handler) {
 
 	// custom channel to capture OS signals
 	stop := make(chan os.Signal, 1)
-	// notify the channel for interupt or termination signals
+	// notify the channel for interrupt or termination signals
 	signal.Notify(stop, os.Interrupt)
 
 	// log the server startup
@@ -30,7 +30,6 @@ func Server(addr string, handler http.Handler) {
 	go func() {
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("\nServer error: %v\n", err)
-			// os.Exit(1) not needed in case of log.fatalf
 		}
 	}()
 

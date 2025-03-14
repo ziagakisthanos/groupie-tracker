@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-// FetchData fetches data from a given URL and unmarshals it into the provided target struct
+// FetchData fetches data from a given URL and unmarshalls it into the provided target struct
 func FetchData(url string, target interface{}) error {
 	resp, err := http.Get(url)
 	if err != nil {
