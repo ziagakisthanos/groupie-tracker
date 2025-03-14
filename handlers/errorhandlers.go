@@ -40,8 +40,6 @@ func InternalServerErrorHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// set the HTTP status code to 500
-	// w.WriteHeader(http.StatusInternalServerError)
-
 	if err := tmpl.Execute(w, nil); err != nil {
 		http.Error(w, "Failed to render 500 template", http.StatusInternalServerError)
 		log.Println("Failed to render 500 template:", err)

@@ -83,8 +83,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const locationDropdown = document.getElementById("location-dropdown");
 
         // Populated dynamically
-       // let locationCheckboxes = document.querySelectorAll(".location-checkbox");
-
         if (!locationFilterToggle || !locationDropdown) {
             console.error("❌ Location filter elements are missing.");
             return;
@@ -208,7 +206,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Dynamically Populate Location Filter
         function populateLocationFilter() {
-            console.log("populateLocationFilter() called");
             const locationDropdown = document.getElementById("location-dropdown");
             if (!locationDropdown) return;
 
@@ -224,8 +221,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     Object.keys(artist.relations).forEach(loc => locationsSet.add(loc));
                 }
             });
-
-            console.log("Collected locations (raw):", Array.from(locationsSet));
 
             // Convert the set to an array so we can sort it
             let locationsArray = Array.from(locationsSet);
@@ -248,8 +243,6 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
                 locationDropdown.appendChild(label);
             });
-
-            console.log("Location filter populated (sorted & formatted):", locationsArray);
         }
 
         function formatLocation(rawLoc) {
@@ -283,7 +276,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Fallback: if window.artistsData is already loaded, call it immediately.
         if (window.artistsData && window.artistsData.length > 0) {
-            console.log("Artists data already loaded; calling populateLocationFilter()");
             populateLocationFilter();
         }
 

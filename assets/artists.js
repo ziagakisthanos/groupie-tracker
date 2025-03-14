@@ -65,6 +65,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!categoryItem) return;
             const category = categoryItem.dataset.category;
             const dropdown = categoryItem.querySelector(".dropdown-content");
+            if (!dropdown) {
+                console.warn("No .dropdown-content found for category", category);
+                return;
+            }
             if (!dropdown.classList.contains("hidden")) {
                 dropdown.classList.add("hidden");
                 dropdown.innerHTML = "";
@@ -140,7 +144,11 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
             modal.classList.remove("opacity-0", "scale-95");
             modal.classList.add("opacity-100", "scale-100");
-        }, 10);
+            if (window.myMap) {
+                window.myMap.invalidateSize();
+            }
+        }, 2);
+        loadGeolocationMap(artistData);
     }
 
     // Close the modal with a fade-out effect

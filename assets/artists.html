@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Artists</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Load artists.js first so that window.artistsData and render functions are available -->
+    <script src="/assets/geolocalization.js" defer></script>
     <script src="/assets/artists.js"></script>
     <script src="/assets/filters.js" defer></script>
     <script src="/assets/searchbar.js" defer></script>
@@ -163,6 +163,8 @@
                 <div class="dropdown-content hidden mt-2 pl-4 border-l border-gray-300"></div>
             </li>
         </ul>
+        <div id="map-container" class="w-full h-64 mt-4 rounded-lg border border-gray-300">
+        </div>
     </div>
 </div>
 

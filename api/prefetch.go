@@ -10,7 +10,6 @@ func PreFetchData() error {
 	if err != nil {
 		return err
 	}
-	// log.Println("data fetched and cached")
 	return nil
 }
 
