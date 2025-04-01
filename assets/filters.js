@@ -36,14 +36,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     startInput.value = endInput.value;
                 }
                 startDisplay.textContent = startInput.value;
-                startInput.classList.add("focus-glow");
             });
             endInput.addEventListener("input", () => {
                 if (parseInt(endInput.value) < parseInt(startInput.value)) {
                     endInput.value = startInput.value;
                 }
                 endDisplay.textContent = endInput.value;
-                endInput.classList.add("focus-glow");
             });
         }
 
@@ -267,12 +265,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             return parts.join(", ");
         }
-
-        // Listen for the custom event dispatched when artistsData is loaded
-        document.addEventListener("artistsDataLoaded", () => {
-            console.log("artistsDataLoaded event fired");
-            populateLocationFilter();
-        });
 
         // Fallback: if window.artistsData is already loaded, call it immediately.
         if (window.artistsData && window.artistsData.length > 0) {

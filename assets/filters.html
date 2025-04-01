@@ -102,27 +102,5 @@
     </div>
 </div>
 
-<!-- Filters overlay and panel script -->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const filtersPanel = document.getElementById("filters-panel");
-        const filtersOverlay = document.getElementById("filters-overlay");
-        const closeFiltersBtn = document.getElementById("close-filters");
-        // Open filters panel for demo
-        filtersPanel.classList.remove("-translate-x-full");
-        filtersOverlay.classList.remove("hidden");
-        closeFiltersBtn.addEventListener("click", function () {
-            filtersPanel.classList.add("-translate-x-full");
-            filtersOverlay.classList.add("hidden");
-        });
-        // Toggle location dropdown visibility
-        const locationToggle = document.getElementById("location-filter-toggle");
-        const locationDropdown = document.getElementById("location-dropdown");
-        locationToggle.addEventListener("click", function () {
-            locationDropdown.classList.toggle("hidden");
-        });
-    });
-</script>
-
 </body>
 </html>
