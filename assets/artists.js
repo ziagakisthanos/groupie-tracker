@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Expose artistsData globally
     window.artistsData = [];
+    window.currentPage = 1;
 
     // Fetch data with retry logic
     const fetchArtistsWithRetry = async (url, retries = 5, delay = 1000) => {
@@ -174,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (target.classList.contains("view-details-btn") || target.closest(".view-details-btn")) {
             const card = target.closest(".artist-card");
             // Determine the correct artist index based on pagination
-            const startIndex = (currentPage - 1) * itemsPerPage;
+            const startIndex = (window.currentPage - 1) * itemsPerPage;
             const indexInPage = Array.from(artistsContainer.children).indexOf(card);
             const artistIndex = startIndex + indexInPage;
             // Use filtered data if available, otherwise the full list.
@@ -277,9 +278,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Pagination container click handling
     paginationControls.addEventListener("click", (event) => {
         const page = parseInt(event.target.getAttribute("data-page"), 10);
-        if (page && page !== currentPage) {
-            currentPage = page;
-            renderPage(currentPage);
+        if (page && page !== window.currentPage) {
+            window.currentPage = page;
+            renderPage(window.currentPage);
             renderPagination(artistsData.length);
             adjustPaginationPosition();
         }
@@ -290,7 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .then((data) => {
             window.artistsData = data;
             artistsData = data;
-            renderPage(currentPage);
+            renderPage(window.currentPage);
             renderPagination(artistsData.length);
             adjustPaginationPosition();
             document.dispatchEvent(new Event("artistsDataLoaded"));
