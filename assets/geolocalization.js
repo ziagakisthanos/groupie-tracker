@@ -13,7 +13,7 @@ document.head.appendChild(mapStyle);
 window.myMap = null;
 window.mapMarkers = [];
 
-//Fetch geolocation data using OpenStreetMap's Nominatim API.
+// Fetch geolocation data using OpenStreetMap's Nominatim API.
 async function getCoordinates(location) {
     // Replace hyphens with commas for a better query format.
     const processedLocation = location.split("-").join(", ");
@@ -31,25 +31,41 @@ async function getCoordinates(location) {
     }
 }
 
-// Throttled function to fetch coordinates sequentially with delay
-async function fetchCoordinatesParallel(locations, concurrency = 3, delay = 1100) {
-    const results = new Array(locations.length);
-    let index = 0;
+// Progressive function to fetch coordinates and add markers as they become available.
+async function fetchCoordinatesAndAddMarkers(sortedLocations, delay = 1100, concurrency = 3) {
+    let currentIndex = 0;
 
+    // Worker function that processes locations one at a time.
     async function worker() {
-        while (index < locations.length) {
-            const currentIndex = index++;
-            results[currentIndex] = await getCoordinates(locations[currentIndex]);
+        while (currentIndex < sortedLocations.length) {
+            const idx = currentIndex++;
+            const location = sortedLocations[idx];
+            const coord = await getCoordinates(location);
+            if (coord) {
+                // If the map isn't initialized yet, initialize it with the first valid coordinate.
+                if (!window.myMap) {
+                    const mapContainer = document.getElementById("map-container");
+                    window.myMap = L.map(mapContainer).setView([coord.lat, coord.lon], 1);
+                    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(window.myMap);
+                }
+                // Add the marker immediately.
+                const marker = L.marker([coord.lat, coord.lon]).addTo(window.myMap)
+                    .bindPopup(`<b>${location}</b>`);
+                window.mapMarkers.push(marker);
+            }
+            // Wait to respect rate limits before processing the next location.
             await new Promise(resolve => setTimeout(resolve, delay));
         }
     }
 
+    // Start the workers based on the concurrency limit.
     const workers = [];
     for (let i = 0; i < concurrency; i++) {
         workers.push(worker());
     }
     await Promise.all(workers);
-    return results;
 }
 
 // Initializes or updates the map with markers based on concert locations.
@@ -62,9 +78,13 @@ async function loadGeolocationMap(artistData) {
     // Clear any previous content.
     if (!window.myMap) {
         mapContainer.innerHTML = "";
+    } else {
+        // Remove existing markers.
+        window.mapMarkers.forEach(marker => window.myMap.removeLayer(marker));
+        window.mapMarkers = [];
     }
 
-// Get and sort location keys by the earliest date (assumes date strings parse correctly)
+    // Get and sort location keys by the earliest date.
     const locations = Object.keys(artistData.relations);
     const sortedLocations = locations.sort((a, b) => {
         const dateA = new Date(artistData.relations[a][0]);
@@ -72,38 +92,8 @@ async function loadGeolocationMap(artistData) {
         return dateA - dateB;
     });
 
-    // Fetch coordinates for each sorted location.
-    const coordinates = await fetchCoordinatesParallel(sortedLocations);
-    const validCoords = coordinates.filter(coord => coord !== null);
-
-    if (validCoords.length === 0) {
-        mapContainer.innerHTML = "<p class='text-red-500'>Map data unavailable.</p>";
-        return;
-    }
-
-    // Use the first valid coordinate as the center.
-    const center = [validCoords[0].lat, validCoords[0].lon];
-
-    // If the map hasn't been created yet, initialize it.
-    if (!window.myMap) {
-        window.myMap = L.map(mapContainer).setView(center, 4);
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(window.myMap);
-    } else {
-        // Update the map view.
-        window.myMap.setView(center, 4);
-        // Remove any existing markers.
-        window.mapMarkers.forEach(marker => window.myMap.removeLayer(marker));
-        window.mapMarkers = [];
-    }
-
-    // Add markers for each valid coordinate.
-    validCoords.forEach((coord, index) => {
-        const marker = L.marker([coord.lat, coord.lon]).addTo(window.myMap)
-            .bindPopup(`<b>${locations[index]}</b>`);
-        window.mapMarkers.push(marker);
-    });
+    // Progressive loading: fetch coordinates and add markers as soon as they are available.
+    await fetchCoordinatesAndAddMarkers(sortedLocations, 0, 5);
 }
 
 // Expose loadGeolocationMap globally.
