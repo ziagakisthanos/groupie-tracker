@@ -13,8 +13,15 @@ document.head.appendChild(mapStyle);
 window.myMap = null;
 window.mapMarkers = [];
 
+// Global cache for coordinates.
+const coordinateCache = {};
+
 // Fetch geolocation data using OpenStreetMap's Nominatim API.
 async function getCoordinates(location) {
+    // Check if location is already in the cache.
+    if(coordinateCache[location]) {
+      return coordinateCache[location];
+    }
     // Replace hyphens with commas for a better query format.
     const processedLocation = location.split("-").join(", ");
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(processedLocation)}`;
@@ -22,7 +29,10 @@ async function getCoordinates(location) {
         const response = await fetch(url);
         const data = await response.json();
         if (data && data.length > 0) {
-            return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+            const coord = { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+            // Save the result in the cache.
+            coordinateCache[location] = coord;
+            return coord;
         }
         return null;
     } catch (error) {
