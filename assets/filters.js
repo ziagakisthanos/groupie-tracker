@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 selectedMembers.length === 0 && selectedLocations.length === 0
             ) {
                 window.filteredArtists = null;
-                window.currentPage = 1;
+                // Remove resetting currentPage to preserve the current pagination
                 window.renderPage(window.currentPage);
                 window.renderPagination(window.artistsData.length);
                 return;
