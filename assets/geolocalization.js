@@ -9,10 +9,9 @@ mapStyle.rel = "stylesheet";
 mapStyle.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
 document.head.appendChild(mapStyle);
 
-// Global variables to hold the map instance, markers and polyline
+// Global variables to hold the map instance, markers.
 window.myMap = null;
 window.mapMarkers = [];
-window.myPolyline = null;
 
 //Fetch geolocation data using OpenStreetMap's Nominatim API.
 async function getCoordinates(location) {
@@ -30,6 +29,27 @@ async function getCoordinates(location) {
         console.error("Error fetching geolocation data:", error);
         return null;
     }
+}
+
+// Throttled function to fetch coordinates sequentially with delay
+async function fetchCoordinatesParallel(locations, concurrency = 3, delay = 1100) {
+    const results = new Array(locations.length);
+    let index = 0;
+
+    async function worker() {
+        while (index < locations.length) {
+            const currentIndex = index++;
+            results[currentIndex] = await getCoordinates(locations[currentIndex]);
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+    }
+
+    const workers = [];
+    for (let i = 0; i < concurrency; i++) {
+        workers.push(worker());
+    }
+    await Promise.all(workers);
+    return results;
 }
 
 // Initializes or updates the map with markers based on concert locations.
@@ -53,7 +73,7 @@ async function loadGeolocationMap(artistData) {
     });
 
     // Fetch coordinates for each sorted location.
-    const coordinates = await Promise.all(sortedLocations.map(getCoordinates));
+    const coordinates = await fetchCoordinatesParallel(sortedLocations);
     const validCoords = coordinates.filter(coord => coord !== null);
 
     if (validCoords.length === 0) {
@@ -76,11 +96,6 @@ async function loadGeolocationMap(artistData) {
         // Remove any existing markers.
         window.mapMarkers.forEach(marker => window.myMap.removeLayer(marker));
         window.mapMarkers = [];
-        // remove the existing polylines, if any
-        if (window.myPolyline) {
-            window.myMap.removeLayer(window.myPolyline);
-            window.myPolyline = null;
-        }
     }
 
     // Add markers for each valid coordinate.
@@ -89,12 +104,6 @@ async function loadGeolocationMap(artistData) {
             .bindPopup(`<b>${locations[index]}</b>`);
         window.mapMarkers.push(marker);
     });
-
-    // If there is more than one marker, draw a polyline connecting them in order.
-    if (validCoords.length > 1) {
-        const latLngs = validCoords.map(coord => [coord.lat, coord.lon]);
-        window.myPolyline = L.polyline(latLngs, { color: 'blue' }).addTo(window.myMap);
-    }
 }
 
 // Expose loadGeolocationMap globally.
