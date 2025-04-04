@@ -19,6 +19,7 @@ func SetupRoutes() *http.ServeMux {
 	// register handlers root paths
 	mux.HandleFunc("/", handlers.HomePageHandler)
 	mux.HandleFunc("/artists", handlers.ArtistsPageHandler)
+	mux.HandleFunc("/about", handlers.AboutPageHandler)
 	mux.HandleFunc("/api/data", func(w http.ResponseWriter, r *http.Request) {
 		// serve the preFetched data
 		handlers.DataHandler(w, r, api.GetPrefetchedArtists())

@@ -44,3 +44,19 @@ func ArtistsPageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func AboutPageHandler(w http.ResponseWriter, r *http.Request) {
+	templatePath := filepath.Join("assets", "about.html")
+
+	tmpl, err := template.ParseFiles(templatePath)
+	if err != nil {
+		InternalServerErrorHandler(w, r)
+		log.Println("Error loading about us template:", err)
+		return
+	}
+
+	if err := tmpl.Execute(w, nil); err != nil {
+		log.Fatal("Failed to load about us template:", err)
+		return
+	}
+}
